@@ -1,0 +1,24 @@
+﻿@model IEnumerable<User>
+
+<div class="user-list">
+    @if (Model != null)
+    {
+        @foreach (var user in Model)
+        {
+            <div class="user-card surface">
+                <div class="user-actions">
+                    <i class="fa-regular fa-ellipsis" data-modal="true" data-target="#edituserModal-@user.Id"></i>
+                </div>
+
+                <div class="user-info">
+                    <img class="user-image" src="~/images/avatars/avatar-template.svg" alt="" />
+                    <h3 class="user-name">@user.DisplayName</h3>
+                    <div class="user-jobtitle">@user.JobTitle CEO</div>
+                    <div class="user-email">@user.Email</div>
+                    <div class="user-phone">@user.Phone</div>
+                    <button class="user-message btn btn-gray">Message</button>
+                </div>
+            </div>
+        }
+    }
+</div>

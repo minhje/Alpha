@@ -1,0 +1,15 @@
+﻿using Business.Services;
+using Domain.Models;
+using Presentation.WebApp.ViewModels.Add;
+using Presentation.WebApp.ViewModels.Edit;
+
+namespace Presentation.WebApp.ViewModels;
+
+public class ProjectViewModel(IClientService clientService)
+{
+    private readonly IClientService _clientService = clientService;
+
+    public IEnumerable<Project> Projects { get; set; } = [];
+    public AddProjectViewModel AddProjectFormData { get; set; } = new();
+    public EditProjectViewModel EditProjectFormData { get; set; } = new();
+}

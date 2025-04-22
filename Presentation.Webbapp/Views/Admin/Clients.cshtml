@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Client>
+﻿
+@{
+    ViewData["Title"] = "Clients";
+}
+
+
+<section id="clients">
+    <header>
+        <h2>@ViewData["Title"]</h2>
+        <button type="button" data-modal="true" data-target="#addClientModal" class="btn btn-add btn-blue">Add Client</button>
+    </header>
+
+
+    <div class="">
+        <partial name="Partials/Sections/_ClientList" model="Model" />
+    </div>
+
+</section>

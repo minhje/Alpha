@@ -1,0 +1,19 @@
+﻿@model IEnumerable<User>
+
+@{
+    ViewData["Title"] = "Team Members";
+    var addMemberFormModel = new AddUserFormData();
+}
+
+<partial name="Partials/Sections/_AddMemberForm" model="addMemberFormModel" />
+
+<section id="team-members">
+    <header>
+        <h2>@ViewData["Title"]</h2>
+        <button type="button" data-modal="true" data-target="#addMemberModal" class="btn btn-add btn-blue">Add Member</button>
+    </header>
+
+    <div>
+        <partial name="Partials/Sections/_MemberList" />
+    </div>
+</section>

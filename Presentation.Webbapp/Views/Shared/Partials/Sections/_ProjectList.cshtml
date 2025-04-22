@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Project>
+
+<div class="members-list">
+
+    @if (Model != null)
+    {
+        @foreach (var project in Model)
+        {
+            <partial name="Partials/Sections/_ProjectListItem" model="project" />
+        }
+    }
+
+</div>

@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(string.IsNullOrEmpty(ViewData["Title"] as String) ? "Alpha Portal" : @ViewData["Title"] + " - Alpha Portal")</title>
+    <script type="importmap"></script>
+    @* Bootstrap CDN *@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    @* Bootstrap Icons CDN *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @* Fontawesome Icons *@
+    <link rel="stylesheet" href="https://kit.fontawesome.com/a576612222.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+</head>
+<body>
+
+    <div class="portal">
+        <div class="logotype">
+            @await Html.PartialAsync("Partials/Components/_AlphaLogotype")
+        </div>
+
+        <div class="side">
+            @await Html.PartialAsync("Partials/Components/_NavLinks")
+        </div>
+
+        <header class="top">
+            <form class="search-form" method="get" asp-controller="" asp-action="" novalidate>
+                <i class="fa-duotone fa-solid fa-magnifying-glass"></i> <input type="search" class="form-search-input" placeholder="Search anything..." />
+            </form>
+
+          <div class="header-buttons">
+
+                <div id="settings-container">
+                    <button type="button" data-type="dropdown" data-target="#settings-dropdown" class="btn-settings">
+                        <i class="fa-duotone fa-solid fa-gear" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i>
+                    </button>
+                    <div id="settings-dropdown" class="dropdown hide"> 
+                         <div class="dropdown-header"> 
+                             <h5>Settings</h5> 
+                         </div> 
+                     </div>
+                </div>
+
+                <div id="notification-container">
+                    <button type="button" data-type="dropdown" data-target="#notification-dropdown" class="btn-notification">
+                        <i class="dot dot-red fa-solid fa-circle show"></i>
+                        <i class="fa-duotone fa-solid fa-bell" style="--fa-primary-opacity: 0.4; --fa-secondary-opacity: 1;"></i>
+                    </button>
+
+                    <div id="notification-dropdown" class="dropdown hide">
+                        <div class="dropdown-header">
+                            <h5>Notifications</h5>
+                            <div class="badge badge-red">5</div>
+                        </div>
+
+                            <div class="divider"></div>
+
+                            <div class="dropdown-body">
+
+                                <div class="notifications">
+
+                                    <div class="notification" data-notification-type="user">
+                                    <div class ="user-image">
+                                        <img src="~/images/Avatars/avatar-template.svg" alt="template avatar" />
+                                    </div>
+                                        <span class="message">Minna Hjelm signed in</span>
+                                        <span class="time">1 min ago</span>
+                                    <button class="btn-close"></i></button>
+                                    </div>
+                            </div>
+
+                            </div>
+                        </div>
+
+                </div>
+
+            <div id="account-container">
+                <button type="button" data-type="dropdown" data-target="#account-dropdown" class="btn-account"> 
+                    <img src="~/images/Avatars/avatar-template.svg" alt="template avatar" />
+                </button>
+
+                <div id="account-dropdown" class="dropdown hide">
+
+                    <div class="dropdown-header">
+                        <div class="account-name">
+                            <img src="~/images/Avatars/avatar-template.svg" alt="template avatar" />
+                            <h6>Minna Hjelm</h6>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-body">
+                    <div class="dropdown-options">
+                        <div class="dropdown-option">
+                            <i class="fa-duotone fa-solid fa-moon-over-sun"></i>
+                                <span>Dark Mode</span>
+                                </div>
+
+                        @* Code for toogle-switch from W3Schools (https://www.w3schools.com/howto/howto_css_switch.asp)  *@
+                            <div class="darkmode-toggle-switch">
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="dropdown-footer">
+                        <div>
+                        <a class="btn btn-logout" asp-controller="Auth" asp-action="Logout"> <i class="fa-duotone fa-solid fa-right-from-bracket"></i> Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

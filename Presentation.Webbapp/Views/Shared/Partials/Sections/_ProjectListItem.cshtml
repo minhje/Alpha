@@ -1,0 +1,34 @@
+﻿@model Project
+
+<div class="surface projects-card">
+    <div class="projects-card-header">
+        @if (Model.Image != null)
+        {
+            <div class="avatar">
+                <img src="@Model.Image" alt="@Model.Image" />
+            </div>
+        }
+        else
+        {
+            <div class="avatar">
+                <img src="~/images/Templates/template-blue.svg" alt="Default Image" />
+            </div>
+        }
+
+        <h6>@Model.ProjectName</h6>
+        <p>@Model.Client</p>
+        <i class="fa-regular fa-ellipsis" data-modal="true" data-target="#editProjectModal"></i>
+    </div>
+
+    <div class="projects-card-main">
+        <p>@Model.Description</p>
+    </div>
+
+    <div class="projects-card-footer">
+        <div class="countdown"><i class="fa-duotone fa-solid fa-clock"></i> 1 week left</div>
+        <div class="members">
+            <img src=@Model.User class="circle"/>
+        </div>
+    </div>
+</div>
+
