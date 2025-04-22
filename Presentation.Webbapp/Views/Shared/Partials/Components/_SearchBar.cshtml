@@ -1,0 +1,18 @@
+﻿<form class="search-form" method="get" asp-controller="" asp-action="" novalidate>
+    <i class="fa-duotone fa-solid fa-magnifying-glass"></i> <input type="search" class="form-search-input" placeholder="Search anything..." />
+</form>
+
+<script>
+    const preSelectedTags = []
+
+    initTagSelector({
+        containerId: 'tags',
+        inputId: 'tag-search',
+        resultsId: 'tag-search-results',
+        searchUrl: (query) => '@Url.Action("SearchTags", "Tags")' + '?term=' + encodeURIComponent(query),
+        displayProperty: 'tagName',
+        tagClass: 'tag',
+        emptyMessage: 'No tags found.',
+        preselected: preSelectedTags
+    })
+</script>

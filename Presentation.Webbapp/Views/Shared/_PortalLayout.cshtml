@@ -12,6 +12,8 @@
     @* Fontawesome Icons *@
     <link rel="stylesheet" href="https://kit.fontawesome.com/a576612222.css" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="~/js/tags.js" asp-append-version="true"></script>
+    <script src="~/js/modals.js" asp-append-version="true"></script>
 
 </head>
 <body>
@@ -26,9 +28,7 @@
         </div>
 
         <header class="top">
-            <form class="search-form" method="get" asp-controller="" asp-action="" novalidate>
-                <i class="fa-duotone fa-solid fa-magnifying-glass"></i> <input type="search" class="form-search-input" placeholder="Search anything..." />
-            </form>
+            <partial name="Partials/Components/_SearchBar" />
 
           <div class="header-buttons">
 

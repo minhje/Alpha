@@ -22,18 +22,20 @@ public class ProjectsController(IProjectService projectService) : Controller
         var addProjectFormData = model.MapTo<AddProjectFormData>();
         var result = await _projectService.CreateProjectAsync(addProjectFormData);
 
-        return View(model);
+        return RedirectToAction("Index");
+
     }
 
     [HttpPost]
     public IActionResult Update(EditProjectViewModel model)
     {
-        return Json(new { });
+        return RedirectToAction("Index");
+
     }
 
     [HttpPost]
     public IActionResult Delete(string id)
     {
-        return Json(new { });
+        return RedirectToAction("Index");
     }
 }

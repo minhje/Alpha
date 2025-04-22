@@ -19,10 +19,6 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IStatusService _statusService = statusService;
 
-    #region CRUD
-
-    #region Create
-
     public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
     {
         if (formData == null)
@@ -40,10 +36,6 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             ? new ProjectResult { Succeeded = true, StatusCode = 201 }
             : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
-
-    #endregion
-
-    #region Read
 
     public async Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync()
     {
@@ -75,25 +67,5 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         return response.Succeeded
             ? new ProjectResult<Project> { Succeeded = true, StatusCode = 200, Result = response.Result }
             : new ProjectResult<Project> { Succeeded = true, StatusCode = 404, Error = $"Project '{id}' not found." };
-
-        // return response.MapTo<ProjectResult<IEnumerable<Project>>>();
-        // or
-        // return new ProjectResult<Project> { Succeeded = true, StatusCode = 200, Result = response.Result };
     }
-
-    #endregion
-
-    #region Update
-
-
-
-    #endregion
-
-    #region Delete
-
-
-
-    #endregion
-
-    #endregion
 }

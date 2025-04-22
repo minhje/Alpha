@@ -23,35 +23,15 @@
                  </div> 
              </div>
 
-        @*     <div class="form-group">
-                <label class="form-label">Client</label>
-                <div class="form-select" data-placeholder="Choose a client">
-                    <button type="button" class="form-select-trigger">
-                        <span class="form-select-text"></span>
-                    </button>
-                    <ul class="form-select-options">
-                        <li class="form-select-option" data-value="1">Client 1</li>
-                        <li class="form-select-option" data-value="2">Client 2</li>
-                    </ul>
-                    <input type="hidden" name="form-select-value" />
-                </div>
-            </div> *@
-
-            <div class="mb-3">
-                <select asp-for="@Model.Client.ClientName" asp-items="Model.Clients" class="form-control">
-                    <option value="0" disabled selected>-- Select a Client --</option>
-                </select>
-                <span asp-validation-for="@Model.Client.Id"></span>
-            </div>
-            
-           @*   <div class="form-group"> 
+             <div class="form-group"> 
                  <label asp-for="Client"></label> 
-                 <div class="field-group">
-                    <input asp-for="Client" />
-                     <span asp-validation-for="Client"></span> 
+                 <div id="tagged-client" class="form-input form-tag-select">
+                     <input type="text" id="client-search" class="form-tag-input" placeholder="Add client..." />
+                     <label for="client-search" class="fa-solid fa-ellipsis"></label>
+                     <div id="client-search-results" class="search-results"></div>
                  </div> 
              </div> 
- *@
+
              <div class="form-group"> 
                  <label asp-for="Description"></label> 
                  <div class="field-group"> 
@@ -98,4 +78,19 @@
         </form>
 
     </div>
-</div> 
+</div>
+
+<script>
+    const preSelectedClientTags = []
+
+    initTagSelector({
+        containerId: 'tagged-client',
+        inputId: 'client-search',
+        resultsId: 'client-search-results',
+        searchUrl: (query) => '@Url.Action("SearchClients", "Clients")' + '?term=' + encodeURIComponent(query),
+        displayProperty: 'ClientName',
+        tagClass: 'client-tag',
+        emptyMessage: 'No clients found.',
+        preselected: preSelectedClientTags
+    })
+</script>

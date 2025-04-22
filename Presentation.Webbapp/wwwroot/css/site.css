@@ -540,6 +540,17 @@ font-family: var(--font-fa);
         text-decoration: none;
     }
 
+.btn-remove {
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out, color 0.1s ease-in-out;
+}
+
+    .btn-remove:hover {
+        cursor: pointer;
+        color: var(--dark-400);
+    }
+
 .btn-account {
     transition: background-color 0.1s ease-in-out;
     background-color: transparent;
@@ -704,6 +715,17 @@ input:checked + .slider:before {
         }
 
 
+/* TAGS */
+.tag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--background-color);
+    border-radius: 12px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+}
+
 /* client list */
 .client-list {
     height: 100%;
@@ -808,6 +830,17 @@ input:checked + .slider:before {
             width: 100%;
         }
 
+.member-avatar {
+    width: 24px;
+    height: 24px; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--btn-gray-background-color);
+    color: var(--white-100);
+    font-size: 0.8rem;
+}
 
 /* tables */
 table {
@@ -951,6 +984,57 @@ input[type="checkbox"] {
         border-bottom: 1px solid var(--border-color);
     }
 
+.form-input::placeholder,
+.form-select::placeholder,
+.form-textarea::placeholder,
+.form-tag-input::placeholder {
+    color: var(--text-color);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: var(--font-regular);
+}
+
+.form-tag-select label,
+.form-tag-select i {
+    cursor: pointer;
+    position: absolute;
+    font-size: 1.1rem; 
+    right: 1rem;
+    top: 0.8rem;
+}
+
+.search-results {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 13px 13px; 
+    padding: 1rem;
+    width: 100%;
+    position: absolute;
+    top: 85%;
+    left: 0;
+    z-index: 10;
+    display: none;
+}
+
+.search-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.search-item:hover {
+    background-color: var(--blue-accent-10);
+    border-radius: 12px;
+}
+
+.search-item.active {
+    background-color: var(--blue-accent-10);
+    border-radius: 12px;
+}
 
 /* badges */
 .badge {
