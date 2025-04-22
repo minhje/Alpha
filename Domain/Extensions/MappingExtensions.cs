@@ -20,7 +20,6 @@ public static class MappingExtensions
                 destinationProperty.SetValue(destination, value);
             }
         }
-
         return destination;
     }
 }

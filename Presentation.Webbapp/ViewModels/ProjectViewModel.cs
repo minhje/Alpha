@@ -12,4 +12,5 @@ public class ProjectViewModel(IClientService clientService)
     public IEnumerable<Project> Projects { get; set; } = [];
     public AddProjectViewModel AddProjectFormData { get; set; } = new();
     public EditProjectViewModel EditProjectFormData { get; set; } = new();
+
 }

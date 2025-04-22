@@ -1,12 +1,13 @@
 ﻿using Domain.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.WebApp.ViewModels.Add;
 
 public class AddProjectViewModel
 {
-    //public IEnumerable<SelectListItem> Clients { get; set; } = [];
-    //public IEnumerable<SelectListItem> Members { get; set; } = [];
+    public IEnumerable<SelectListItem> Clients { get; set; } = [];
+    public IEnumerable<SelectListItem> Members { get; set; } = [];
     //public string? Image { get; set; }
 
     [Display(Name = "Project Image", Prompt = "Select a image")]

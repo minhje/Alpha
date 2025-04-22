@@ -37,15 +37,6 @@ public class AdminController(IUserService userService, IProjectService projectSe
         return View(viewModel);
     }
 
-    //[Route("admin/projects")]
-    //public async Task<IActionResult> Projects()
-    //{
-    //    var projectResult = await _projectService.GetProjectsAsync();
-    //    var projects = projectResult.Result;
-    //    return View(projects);
-    //}
-
-
     //[Authorize(Roles = "admin")]
     //[Route("members")]
     public async Task<IActionResult> Members()

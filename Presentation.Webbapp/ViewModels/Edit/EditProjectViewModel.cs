@@ -32,14 +32,14 @@ public class EditProjectViewModel
     [DataType(DataType.Currency)]
     public decimal? Budget { get; set; }
 
-    //[Required(ErrorMessage = "Required")]
-    //[Display(Name = "Client", Prompt = "Select client")]
-    //public Client Client { get; set; } = null!;
+    [Required(ErrorMessage = "Required")]
+    [Display(Name = "Client", Prompt = "Select client")]
+    public Client Client { get; set; } = null!;
 
-    //[Required(ErrorMessage = "Required")]
-    //[Display(Name = "Project Manager", Prompt = "Select project manager")]
-    //public Member Member { get; set; } = null!;
+    [Required(ErrorMessage = "Required")]
+    [Display(Name = "Project Manager", Prompt = "Select project manager")]
+    public User User { get; set; } = null!;
 
-    //[Display(Name = "Status", Prompt = "Select project status")]
-    //public Status? Status { get; set; }
-    }
+    [Display(Name = "Status", Prompt = "Select project status")]
+    public Status? Status { get; set; }
+}

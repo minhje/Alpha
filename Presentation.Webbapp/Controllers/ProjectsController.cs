@@ -2,7 +2,6 @@
 using Domain.Dtos;
 using Domain.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Presentation.WebApp.ViewModels;
 using Presentation.WebApp.ViewModels.Add;
 using Presentation.WebApp.ViewModels.Edit;
 
@@ -14,15 +13,8 @@ public class ProjectsController(IProjectService projectService) : Controller
 
     public async Task<IActionResult> Index()
     {
-        //var model = new ProjectViewModel
-        //{
-        //     //Projects = await _projectService.GetProjectsAsync()
-        //};
-
         return View();
     }
-
-
 
     [HttpPost]
     public async Task<IActionResult> Add(AddProjectViewModel model)
@@ -30,7 +22,7 @@ public class ProjectsController(IProjectService projectService) : Controller
         var addProjectFormData = model.MapTo<AddProjectFormData>();
         var result = await _projectService.CreateProjectAsync(addProjectFormData);
 
-        return Json(new { });
+        return View(model);
     }
 
     [HttpPost]
