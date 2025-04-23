@@ -1036,6 +1036,17 @@ input[type="checkbox"] {
     border-radius: 12px;
 }
 
+.search-results {
+    display: block;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    z-index: 1000;
+    position: absolute;
+    width: 100%;
+}
+
 /* badges */
 .badge {
     display: inline-block;

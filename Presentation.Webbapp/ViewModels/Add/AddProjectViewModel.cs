@@ -6,8 +6,6 @@ namespace Presentation.WebApp.ViewModels.Add;
 
 public class AddProjectViewModel
 {
-    public IEnumerable<SelectListItem> Clients { get; set; } = [];
-    public IEnumerable<SelectListItem> Members { get; set; } = [];
 
     [Display(Name = "Project Image", Prompt = "Select a image")]
     [DataType(DataType.Upload)]
@@ -37,6 +35,7 @@ public class AddProjectViewModel
     [Required(ErrorMessage = "Required")] 
     [Display(Name = "Client", Prompt = "Select client")]
     public Client Client { get; set; } = null!;
+    public List<string> SelectedClientIds { get; set; } = [];
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Project Manager", Prompt = "Select project manager")]

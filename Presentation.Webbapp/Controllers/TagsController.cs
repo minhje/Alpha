@@ -22,4 +22,18 @@ public class TagsController(DataContext context) : Controller
 
         return Json(tags);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> SearchClients(string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+            return Json(new List<object>());
+
+        var clients = await _context.Clients
+            .Where(c => c.ClientName.Contains(term))
+            .Select(c => new { id = c.Id, clientName = c.ClientName })
+            .ToListAsync();
+
+        return Json(clients);
+    }
 }

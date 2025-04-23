@@ -5,6 +5,7 @@
     const tagContainer = document.getElementById(config.containerId)
     const input = document.getElementById(config.inputId)
     const results = document.getElementById(config.resultsId)
+    const selectedInputsIds = document.getElementById(config.selectedInputsIds)
 
     if (Array.isArray(config.preselected)) {
         config.preselected.forEach(item => addTag(item))
@@ -39,91 +40,150 @@
         
     })
 
+    //function renderSearchResults(data) {
+    //    results.innerHTML = ''
+
+    //    if (data.length === 0) {
+    //        const noResult = document.createElement('div')
+    //        noResult.classList.add('search-item')
+    //        noResult.textContent = config.emptyMessage || 'No results'
+    //        results.appendChild(noResult)
+    //    }
+    //    else {
+    //        data.forEach(item => {
+    //            if (!selectedIds.includes(item.id)) {
+    //                const resultItem = document.createElement('div')
+    //                resultItem.classList.add('search-item')
+    //                resultItem.dataset.id = item.id
+
+    //                if (config.tagClass === 'client-tag') {
+    //                    tag.innerHTML = `<span>${item[config.displayProperety]}</span>`
+    //                }
+    //                else if (config.tagType === 'client') {
+    //                    tag.innerHTML =
+    //                        `
+    //                    <img class="member-avatar" src="${config.avatarFolder || ''}${item[config.imageProperty]}">
+    //                    <span>${item[config.displayProperety]}</span>
+    //                    `
+    //                }
+    //                else {
+    //                    `
+    //                    <span>${item[config.displayProperety]}</span>
+    //                    `
+
+    //                }
+
+    //                resultItem.addEventListener('click', () => addTag(item))
+    //                results.appendChild(resultItem)
+    //            }
+    //        })
+    //    }
+
+    //    results.style.display = 'block'
+    //}
+
     function renderSearchResults(data) {
-        results.innerHTML = ''
+        results.innerHTML = '';
 
         if (data.length === 0) {
-            const noResult = document.createElement('div')
-            noResult.classList.add('search-item')
-            noResult.textContent = config.emptyMessage || 'No results'
-            results.appendChild(noResult)
-        }
-        else {
+            const noResult = document.createElement('div');
+            noResult.classList.add('search-item');
+            noResult.textContent = config.emptyMessage || 'No clients found';
+            results.appendChild(noResult);
+        } else {
             data.forEach(item => {
                 if (!selectedIds.includes(item.id)) {
-                    const resultItem = document.createElement('div')
-                    resultItem.classList.add('search-item')
-                    resultItem.dataset.id = item.id
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('search-item');
+                    resultItem.dataset.id = item.id;
 
-                    if (config.tagClass === 'client-tag') {
-                        tag.innerHTML = `<span>${item[config.displayProperety]}</span>`
-                    }
-                    else if (config.tagType === 'member') {
-                        tag.innerHTML =
-                            `
-                        <img class="member-avatar" src="${config.avatarFolder || ''}${item[config.imageProperty]}">
-                        <span>${item[config.displayProperety]}</span>
-                        `
-                    }
-                    else {
-                        `
-                        <span>${item[config.displayProperety]}</span>
-                        `
+                    // Fix: Use resultItem instead of tag
+                    resultItem.innerHTML = `<span>${item[config.displayProperty]}</span>`;
 
-                    }
-
-                    resultItem.addEventListener('click', () => addTag(item))
-                    results.appendChild(resultItem)
+                    resultItem.addEventListener('click', () => addTag(item));
+                    results.appendChild(resultItem);
                 }
-            })
+            });
         }
 
-        results.style.display = 'block'
+        results.style.display = 'block';
     }
 
+
+    //function addTag(item) {
+    //    const id = parseInt(item.id)
+    //    if (selectedIds.includes(id))
+    //        return
+
+    //    const tag = document.createElement('div')
+    //    tag.classList.add(config.tagClass || 'tag')
+
+    //    if (config.tagClass === 'client-tag') {
+    //        tag.innerHTML = `<span>${item[config.displayProperety]}</span>`
+    //    }
+
+    //    else if (config.tagC === 'client-tag') {
+    //        tag.innerHTML =
+    //            `
+    //        <img class="member-avatar" src="${config.avatarFolder || ''}${item[config.imageProperty]}">
+    //        <span>${item[config.displayProperety]}</span>
+    //        `;
+    //    }
+    //    else {
+    //        `
+    //        <span>${item[config.displayProperety]}</span>
+    //        `
+    //    }
+
+    //    const removeBtn = document.createElement('span')
+    //        removeBtn.textContent = 'x'
+    //        removeBtn.classList.add = ('btn-remove')
+    //        removeBtn.dataset.id = id
+    //        removeBtn.addEventListener('click', (e) => {
+    //            selectedIds = selectedIds.filter(i => i !== id)
+    //            tag.remove();
+    //            updateSelectedIdsInput();
+    //            e.stopPropagation()
+    //        })
+
+    //    tag.appendChild(removeBtn)
+    //    tagContainer.insertBefore(tag, input)
+
+    //    input.value = ''
+    //    results.innerHTML = ''
+    //    results.style.display = 'none'
+
+    //}
     function addTag(item) {
-        const id = parseInt(item.id)
-        if (selectedIds.includes(id))
-            return
+        const id = item.id; // Behåll id som sträng
+        if (selectedIds.includes(id)) return;
 
-        const tag = document.createElement('div')
-        tag.classList.add(config.tagClass || 'tag')
+        const tag = document.createElement('div');
+        tag.classList.add(config.tagClass || 'tag');
 
-        if (config.tagClass === 'client-tag') {
-            tag.innerHTML = `<span>${item[config.displayProperety]}</span>`
-        }
+        // Använd rätt egenskap för att visa klientnamnet
+        tag.innerHTML = `<span>${item[config.displayProperty]}</span>`;
 
-        else if (config.tagC === 'client-tag') {
-            tag.innerHTML =
-                `
-            <img class="member-avatar" src="${config.avatarFolder || ''}${item[config.imageProperty]}">
-            <span>${item[config.displayProperety]}</span>
-            `;
-        }
-        else {
-            `
-            <span>${item[config.displayProperety]}</span>
-            `
-        }
+        const removeBtn = document.createElement('span');
+        removeBtn.textContent = 'x';
+        removeBtn.classList.add('btn-remove');
+        removeBtn.dataset.id = id;
+        removeBtn.addEventListener('click', (e) => {
+            selectedIds = selectedIds.filter(i => i !== id);
+            tag.remove();
+            updateSelectedIdsInput();
+            e.stopPropagation();
+        });
 
-        const removeBtn = document.createElement('span')
-            removeBtn.textContent = 'x'
-            removeBtn.classList.add = ('btn-remove')
-            removeBtn.dataset.id = id
-            removeBtn.addEventListener('click', (e) => {
-                selectedIds = selectedIds.filter(i => i !== id)
-                tag.remove();
-                updateSelectedIdsInput();
-                e.stopPropagation()
-            })
+        tag.appendChild(removeBtn);
+        tagContainer.insertBefore(tag, input);
 
-        tag.appendChild(removeBtn)
-        tagContainer.insertBefore(tag, input)
+        selectedIds.push(id);
+        updateSelectedIdsInput();
 
-        input.value = ''
-        results.innerHTML = ''
-        results.style.display = 'none'
-
+        input.value = '';
+        results.innerHTML = '';
+        results.style.display = 'none';
     }
 
     function removeLastTag() {
@@ -139,9 +199,9 @@
     }
 
     function updateSelectedIdsInput() {
-        const hiddenInput = document.getElementById("SelectedIds")
+        const hiddenInput = selectedInputsIds;
         if (hiddenInput) {
-            hiddenInput.value = JSON.stringify(selectedIds)
+            hiddenInput.value = JSON.stringify(selectedIds);
         }
     }
 

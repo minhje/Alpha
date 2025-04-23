@@ -8,7 +8,8 @@
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form novalidate method="post" asp-action="Add" asp-controller="Projects">
+        <form asp-action="Add" asp-controller="Projects" novalidate method="post">
+            <input type="hidden" name="SelectedClientsIds" id="SelectedClientsIds" />
 
             <div class="image-previewer"> 
                 <img src="" class="image-preview" /> 
@@ -81,16 +82,17 @@
 </div>
 
 <script>
-    const preSelectedClientTags = []
+    const preSelectedClients = []
 
-    initTagSelector({
-        containerId: 'tagged-client',
-        inputId: 'client-search',
-        resultsId: 'client-search-results',
-        searchUrl: (query) => '@Url.Action("SearchClients", "Clients")' + '?term=' + encodeURIComponent(query),
-        displayProperty: 'ClientName',
-        tagClass: 'client-tag',
-        emptyMessage: 'No clients found.',
-        preselected: preSelectedClientTags
-    })
+        initTagSelector({
+            containerId: 'tagged-client',
+            inputId: 'client-search',
+            resultsId: 'client-search-results',
+            searchUrl: (query) => '/Clients/SearchClients?term=' + encodeURIComponent(query),
+            displayProperty: 'clientName',
+            tagClass: 'client-tag',
+            emptyMessage: 'No clients found.',
+            hiddenInputId: 'SelectedClientIds',
+            selectedInputIds: 'SelectedClientIds'
+    });
 </script>

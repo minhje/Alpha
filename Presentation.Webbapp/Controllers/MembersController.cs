@@ -36,7 +36,7 @@ namespace Presentation.WebApp.Controllers
                 ModelState.AddModelError(string.Empty, result.Error);
             }
 
-            return View(model);
+            return View();
         }
 
         //[HttpGet]

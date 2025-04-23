@@ -21,7 +21,7 @@ public class AdminController(IUserService userService, IProjectService projectSe
         return View();
     }
 
-    [Route("admin/projects")]
+    [Route("projects/index")]
     public async Task<IActionResult> Projects()
     {
         var projectResult = await _projectService.GetProjectsAsync();
