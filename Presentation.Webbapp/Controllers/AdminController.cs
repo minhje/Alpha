@@ -7,7 +7,7 @@ using Presentation.WebApp.ViewModels.Edit;
 
 namespace Presentation.WebApp.Controllers;
 
-[Authorize]
+//[Authorize]
 //[Route("admin")]
 public class AdminController(IUserService userService, IProjectService projectService, IClientService clientService) : Controller
 {
@@ -21,7 +21,7 @@ public class AdminController(IUserService userService, IProjectService projectSe
         return View();
     }
 
-    [Route("projects/index")]
+    //[Route("projects/index")]
     public async Task<IActionResult> Projects()
     {
         var projectResult = await _projectService.GetProjectsAsync();

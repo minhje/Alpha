@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<Project>
 
-<div class="members-list">
-
+<div>
     @if (Model != null)
     {
         @foreach (var project in Model)
@@ -9,5 +8,8 @@
             <partial name="Partials/Sections/_ProjectListItem" model="project" />
         }
     }
-
+    else
+    {
+        <p>No projects found</p>
+    }
 </div>

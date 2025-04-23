@@ -25,7 +25,7 @@ builder.Services.ConfigureApplicationCookie(x =>
 {
     x.LoginPath = "/auth/signin";
     x.AccessDeniedPath = "/auth/denied";
-    x.ExpireTimeSpan = TimeSpan.FromHours(1);
+    x.ExpireTimeSpan = TimeSpan.FromHours(24);
     x.SlidingExpiration = true;
     x.Cookie.HttpOnly = true;
     x.Cookie.IsEssential = true;
@@ -36,10 +36,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
+
 
 builder.Services.AddControllersWithViews();
 
@@ -70,5 +71,10 @@ app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Admin}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "projects",
+    pattern: "projects/{action=Index}/{id?}",
+    defaults: new { controller = "Projects" });
 
 app.Run();
