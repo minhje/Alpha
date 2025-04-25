@@ -1,4 +1,6 @@
-﻿namespace Domain.Dtos;
+﻿using Domain.Models;
+
+namespace Domain.Dtos;
 
 public class AddProjectFormData
 {
@@ -8,7 +10,9 @@ public class AddProjectFormData
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public decimal? Budget { get; set; }
-    public string ClientId { get; set; } = null!;
-    public string MemberId { get; set; } = null!;
+    public Client Client { get; set; } = null!;
+    public List<string> SelectedClientIds { get; set; } = [];
+    public string? MemberId { get; set; }
     public int StatusId { get; set; }
+
 }

@@ -1,5 +1,4 @@
 ﻿using Domain.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.WebApp.ViewModels.Add;
@@ -32,14 +31,13 @@ public class AddProjectViewModel
     [DataType(DataType.Currency)]
     public decimal? Budget { get; set; }
 
-    [Required(ErrorMessage = "Required")] 
+    //[Required(ErrorMessage = "Required")]
     [Display(Name = "Client", Prompt = "Select client")]
-    public Client Client { get; set; } = null!;
+    public Client? Client { get; set; }
     public List<string> SelectedClientIds { get; set; } = [];
 
-    [Required(ErrorMessage = "Required")]
     [Display(Name = "Project Manager", Prompt = "Select project manager")]
-    public User Member { get; set; } = null!;
+    public User? Member { get; set; }
 
     [Display(Name = "Status", Prompt = "Select project status")]
     public Status? Status { get; set; }

@@ -8,8 +8,7 @@
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form asp-action="Add" asp-controller="Projects" novalidate method="post">
-            <input type="hidden" name="SelectedClientsIds" id="SelectedClientsIds" />
+        <form asp-action="Add" asp-controller="Projects" method="post" novalidate>
 
             <div class="image-previewer"> 
                 <img src="" class="image-preview" /> 
@@ -30,8 +29,10 @@
                      <input type="text" id="client-search" class="form-tag-input" placeholder="Add client..." />
                      <label for="client-search" class="fa-solid fa-ellipsis"></label>
                      <div id="client-search-results" class="search-results"></div>
-                 </div> 
-             </div> 
+                     <input type="hidden" name="SelectedClientIds" id="SelectedClientIds" />
+                    <span asp-validation-for="Client"></span>
+                </div> 
+             </div>
 
              <div class="form-group"> 
                  <label asp-for="Description"></label> 
@@ -82,17 +83,40 @@
 </div>
 
 <script>
-    const preSelectedClients = []
+          document.addEventListener("DOMContentLoaded", () => {
+        const clientSearchInput = document.getElementById('client-search');
+        const clientSearchResults = document.getElementById('client-search-results');
+        const selectedClientIds = document.getElementById('SelectedClientIds');
 
-        initTagSelector({
-            containerId: 'tagged-client',
-            inputId: 'client-search',
-            resultsId: 'client-search-results',
-            searchUrl: (query) => '/Clients/SearchClients?term=' + encodeURIComponent(query),
-            displayProperty: 'clientName',
-            tagClass: 'client-tag',
-            emptyMessage: 'No clients found.',
-            hiddenInputId: 'SelectedClientIds',
-            selectedInputIds: 'SelectedClientIds'
+        if (clientSearchInput && clientSearchResults && selectedClientIds) {
+            initTagSelector({
+                containerId: 'tagged-client',
+                inputId: 'client-search',
+                resultsId: 'client-search-results',
+                searchUrl: (query) => `/Clients/SearchClients?term=${encodeURIComponent(query)}`,
+                displayProperty: 'clientName',
+                tagClass: 'client-tag',
+                emptyMessage: 'No clients found.',
+                hiddenInputId: 'SelectedClientIds',
+                preselected: [] // Pass preselected clients if any
+            });
+        } else {
+            console.error("One or more required elements for initTagSelector are missing.");
+        }
     });
+
+
+     // const preSelectedClients = []
+
+    //     initTagSelector({
+    //         containerId: 'tagged-client',
+    //         inputId: 'client-search',
+    //         resultsId: 'client-search-results',
+    //         searchUrl: (query) => '/Clients/SearchClients?term=' + encodeURIComponent(query),
+    //         displayProperty: 'clientName',
+    //         tagClass: 'client-tag',
+    //         emptyMessage: 'No clients found.',
+    //         hiddenInputId: 'SelectedClientIds',
+    //         selectedInputIds: 'SelectedClientIds'
+    // });
 </script>

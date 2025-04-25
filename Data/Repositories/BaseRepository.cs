@@ -5,7 +5,7 @@ using Data.Contexts;
 using Data.Models;
 using Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+using Data.Entities;
 
 namespace Data.Repositories;
 
@@ -38,7 +38,6 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
             return new RepositoryResult<bool> { Succeeded = false, StatusCode = 500, Error = ex.Message };
         }
     }
-
 
     public virtual async Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDecending = false, Expression<Func<TEntity, object>>? sortBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
     {
@@ -89,7 +88,6 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
             foreach (var include in includes)
                 query = query.Include(include);
 
-        // Added ! extra that the teacher didn't add.
         var entity = await query.FirstOrDefaultAsync(where!);
         if (entity == null)
             return new RepositoryResult<TModel>

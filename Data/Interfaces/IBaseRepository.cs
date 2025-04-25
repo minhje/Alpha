@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Entities;
+using Data.Models;
 using System.Linq.Expressions;
 
 namespace Data.Interfaces
