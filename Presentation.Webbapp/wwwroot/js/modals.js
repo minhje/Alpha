@@ -2,28 +2,28 @@
     const previewSize = 150;
 
     // Open modal
-    const modalButtons = document.querySelectorAll('[data-modal="true"]'); // Get all elements with data-modal="true"
+    const modalButtons = document.querySelectorAll('[data-modal="true"]');
     modalButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const modalTarget = button.getAttribute('data-target'); // Get data-target
-            const modal = document.querySelector(modalTarget); // Get modal element
+            const modalTarget = button.getAttribute('data-target');
+            const modal = document.querySelector(modalTarget);
 
             if (modal) {
-                modal.style.display = 'flex'; // Show modal
+                modal.style.display = 'flex';
             }
         });
     });
 
     // Close modal
-    const closeButtons = document.querySelectorAll('[data-close="true"]'); // Get all elements with data-close="true"
+    const closeButtons = document.querySelectorAll('[data-close="true"]');
     closeButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const modal = button.closest('.modal'); // Get closest parent with class modal
+            const modal = button.closest('.modal');
 
             if (modal) {
-                modal.style.display = 'none'; // Hide modal
+                modal.style.display = 'none';
 
-                // Clear formdata 
+                // Clear formdata
                 modal.querySelectorAll('form').forEach(form => {
                     form.reset();
 
@@ -57,10 +57,11 @@
         }
     });
 
-     //Handle submit forms
+    // Handle submit forms
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
             clearErrorMessages(form);
 
             const formData = new FormData(form);
@@ -72,11 +73,11 @@
                 });
 
                 if (res.ok) {
-                    const modal = form.closest('.modal')
-                    if (modal)
-                        modal.style.display = "none";
+                    const modal = form.closest('.modal');
+                    if (modal) modal.style.display = "none";
 
                     window.location.reload()
+                    console.log('Form submitted successfully');
                 } else if (res.status === 400) {
                     const data = await res.json();
 

@@ -41,6 +41,7 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     public async Task<IActionResult> Add(AddProjectViewModel model)
     {
         //ViewBag.Description = model.Description;
+        Console.WriteLine($"Request received at: {DateTime.UtcNow}");
 
         if (ModelState.IsValid)
         {
