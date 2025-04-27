@@ -36,52 +36,14 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         return View(viewModel);
     }
 
-    // genererat av chat GPT 4o för att försöka få mappningen av "selectedClientsIds" till "Clients" för att kunna skapa ett nytt projekt. Inte fått det att fungera än. 
+    // genererat av chat GPT 4o för att försöka få mappningen av "selectedClientsIds" till "Clients" för att kunna skapa ett nytt projekt.
     [HttpPost]
     public async Task<IActionResult> Add(AddProjectViewModel model)
     {
-        Console.WriteLine($"SelectedClientIds: {string.Join(",", model.SelectedClientIds)}");
+        //ViewBag.Description = model.Description;
 
         if (ModelState.IsValid)
         {
-            if (model.SelectedClientIds != null)
-            {
-                var clientId = model.SelectedClientIds.First();
-                var clientResult = await _clientService.GetClientByIdAsync(clientId);
-
-                if (!clientResult.Succeeded || clientResult.Result == null)
-                {
-                    ModelState.AddModelError("Client", clientResult.Error ?? "The selected client does not exist.");
-                    return View("Index", new ProjectViewModel(_clientService)
-                    {
-                        AddProjectFormData = model,
-                        Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-                    });
-                }
-
-                var client = clientResult.Result.FirstOrDefault();
-                if (client == null)
-                {
-                    ModelState.AddModelError("Client", "The selected client does not exist.");
-                    return View("Index", new ProjectViewModel(_clientService)
-                    {
-                        AddProjectFormData = model,
-                        Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-                    });
-                }
-
-                model.Client = client;
-            }
-            else
-            {
-                ModelState.AddModelError("Client", "A client must be selected.");
-                return View("Index", new ProjectViewModel(_clientService)
-                {
-                    AddProjectFormData = model,
-                    Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-                });
-            }
-
             var addProjectFormData = new AddProjectFormData
             {
                 ProjectName = model.ProjectName,
@@ -89,7 +51,7 @@ public class ProjectsController(IProjectService projectService, DataContext cont
                 EndDate = model.EndDate,
                 Description = model.Description,
                 Budget = model.Budget,
-                Client = model.Client
+                SelectedClientIds = model.SelectedClientIds // Map selected client IDs
             };
 
             var result = await _projectService.CreateProjectAsync(addProjectFormData);
@@ -97,8 +59,6 @@ public class ProjectsController(IProjectService projectService, DataContext cont
             {
                 return RedirectToAction("Index");
             }
-
-            ModelState.AddModelError(string.Empty, result.Error ?? "An unknown error occurred.");
         }
 
         return View("Index", new ProjectViewModel(_clientService)
@@ -107,39 +67,6 @@ public class ProjectsController(IProjectService projectService, DataContext cont
             Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
         });
     }
-
-
-    //[HttpPost]
-    //public async Task<IActionResult> Add(AddProjectViewModel model)
-    //{
-    //    //ViewBag.Description = model.Description;
-    //    Console.WriteLine($"SelectedClientIds: {string.Join("", model.SelectedClientIds)}");
-
-    //    if (ModelState.IsValid)
-    //    {
-    //        var addProjectFormData = new AddProjectFormData
-    //        {
-    //            ProjectName = model.ProjectName,
-    //            StartDate = model.StartDate,
-    //            EndDate = model.EndDate,
-    //            Description = model.Description,
-    //            Budget = model.Budget,
-    //            Client = model.Client // Map selected client IDs
-    //        };
-
-    //        var result = await _projectService.CreateProjectAsync(addProjectFormData);
-    //        if (result.Succeeded)
-    //        {
-    //            return RedirectToAction("Index");
-    //        }
-    //    }
-
-    //    return View("Index", new ProjectViewModel(_clientService)
-    //    {
-    //        AddProjectFormData = model,
-    //        Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-    //    });
-    //}
 
     [HttpPost]
     public IActionResult Update(EditProjectViewModel model)

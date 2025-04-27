@@ -104,6 +104,7 @@
 </div>
 
 <script>
+    // Hjälp tagen ondragleave ChatGPT 4o för att få ut Clients korrekt. 
           document.addEventListener("DOMContentLoaded", () => {
         const clientSearchInput = document.getElementById('client-search');
         const clientSearchResults = document.getElementById('client-search-results');
@@ -125,21 +126,6 @@
             console.error("One or more required elements for initTagSelector are missing.");
         }
     });
-
-
-     // const preSelectedClients = []
-
-    //     initTagSelector({
-    //         containerId: 'tagged-client',
-    //         inputId: 'client-search',
-    //         resultsId: 'client-search-results',
-    //         searchUrl: (query) => '/Clients/SearchClients?term=' + encodeURIComponent(query),
-    //         displayProperty: 'clientName',
-    //         tagClass: 'client-tag',
-    //         emptyMessage: 'No clients found.',
-    //         hiddenInputId: 'SelectedClientIds',
-    //         selectedInputIds: 'SelectedClientIds'
-    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         initWysiwyg('#wysiwyg-editor', '#wysiwyg-toolbar', '#Description', '@Html.Raw(ViewBag.Description ?? "")')
