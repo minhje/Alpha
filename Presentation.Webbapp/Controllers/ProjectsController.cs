@@ -1,6 +1,7 @@
 ﻿using Business.Models;
 using Business.Services;
 using Data.Contexts;
+using Data.Entities;
 using Domain.Dtos;
 using Domain.Extensions;
 using Domain.Models;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presentation.WebApp.ViewModels;
 using Presentation.WebApp.ViewModels.Add;
 using Presentation.WebApp.ViewModels.Edit;
+using System.Text.Json;
 
 namespace Presentation.WebApp.Controllers;
 
@@ -110,7 +112,8 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     //[HttpPost]
     //public async Task<IActionResult> Add(AddProjectViewModel model)
     //{
-    //    Console.WriteLine($"SelectedClientIds: {string.Join(",", model.SelectedClientIds)}");
+    //    //ViewBag.Description = model.Description;
+    //    Console.WriteLine($"SelectedClientIds: {string.Join("", model.SelectedClientIds)}");
 
     //    if (ModelState.IsValid)
     //    {
@@ -121,7 +124,7 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     //            EndDate = model.EndDate,
     //            Description = model.Description,
     //            Budget = model.Budget,
-    //            SelectedClientIds = model.SelectedClientIds // Map selected client IDs
+    //            Client = model.Client // Map selected client IDs
     //        };
 
     //        var result = await _projectService.CreateProjectAsync(addProjectFormData);
@@ -129,8 +132,6 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     //        {
     //            return RedirectToAction("Index");
     //        }
-
-    //        ModelState.AddModelError(string.Empty, result.Error);
     //    }
 
     //    return View("Index", new ProjectViewModel(_clientService)
@@ -139,41 +140,6 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     //        Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
     //    });
     //}
-
-    //[HttpPost]
-    //public async Task<IActionResult> Add(AddProjectFormData model)
-    //{
-    //    if (!ModelState.IsValid)
-    //    {
-
-    //        return View("Index", new ProjectViewModel(_clientService)
-    //        {
-    //            AddProjectFormData = model,
-    //            Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-    //        });
-    //    }
-
-    //    var addProjectFormData = model.MapTo<AddProjectFormData>();
-    //    var result = await _projectService.CreateProjectAsync(addProjectFormData);
-
-    //    if (!result.Succeeded)
-    //    {
-    //        // Handle failure (e.g., show error message)
-    //        ModelState.AddModelError("", "Failed to add project.");
-    //        return View("Index", new ProjectViewModel(_clientService)
-    //        {
-    //            AddProjectFormData = model,
-    //            Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-    //        });
-    //    }
-
-    //    return RedirectToAction("Index");
-    //}
-
-    //var addProjectFormData = model.MapTo<AddProjectFormData>();
-    //var result = await _projectService.CreateProjectAsync(addProjectFormData);
-
-    //return RedirectToAction("Index");
 
     [HttpPost]
     public IActionResult Update(EditProjectViewModel model)

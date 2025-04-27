@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IProjectRepository : IBaseRepository<ProjectEntity, Project>
 {
     new Task<RepositoryResult<bool>> AddAsync(ProjectEntity entity);
-    Task<ClientEntity?> GetClientByIdAsync(string clientId);
+    Task<RepositoryResult<bool>> GetByIdAsync(string clientId);
 }
 public class ProjectRepository(DataContext context) : BaseRepository<ProjectEntity, Project>(context), IProjectRepository
 {
@@ -27,8 +27,16 @@ public class ProjectRepository(DataContext context) : BaseRepository<ProjectEnti
         }
     }
 
-    public async Task<ClientEntity?> GetClientByIdAsync(string clientId)
-    {
-        return await _context.Clients.FindAsync(clientId);
+    public async Task<RepositoryResult<bool>> GetByIdAsync(string clientId)
+    { 
+        try
+        {
+            await _context.Clients.FindAsync(clientId);
+            return new RepositoryResult<bool> { Succeeded = true, Result = true };
+        }
+        catch (Exception ex)
+        {
+            return new RepositoryResult<bool> { Succeeded = false, Error = ex.Message, Result = false };
+        }
     }
 }

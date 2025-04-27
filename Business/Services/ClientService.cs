@@ -24,8 +24,9 @@ public class ClientService(IClientRepository clientRepository) : IClientService
 
     public async Task<ClientResult> GetClientByIdAsync(string clientId)
     {
-        var result = await _clientRepository.GetAsync();
+        var result = await _clientRepository.GetAsync(x => x.Id == clientId);
         return result.MapTo<ClientResult>();
     }
+
 
 }

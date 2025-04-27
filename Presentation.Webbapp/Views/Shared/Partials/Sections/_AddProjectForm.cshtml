@@ -29,15 +29,36 @@
                      <input type="text" id="client-search" class="form-tag-input" placeholder="Add client..." />
                      <label for="client-search" class="fa-solid fa-ellipsis"></label>
                      <div id="client-search-results" class="search-results"></div>
-                     <input type="hidden" name="SelectedClientIds" id="SelectedClientIds" />
+                     <input asp-for="Client" type="hidden" name="SelectedClientIds" id="SelectedClientIds" />
                     <span asp-validation-for="Client"></span>
                 </div> 
              </div>
 
              <div class="form-group"> 
                  <label asp-for="Description"></label> 
-                 <div class="field-group"> 
-                   <input asp-for="Description" /> 
+                 <div class="wysiwyg"> 
+                   <textarea asp-for="Description"></textarea>
+                   <div id="wysiwyg-editor"></div>
+                    <div id="wysiwyg-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-align" value="left"></button>
+                            <button class="ql-align" value="center"></button>
+                            <button class="ql-align" value="right"></button>
+
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-list" value="ordered"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </div>
                      <span asp-validation-for="Description"></span> 
                  </div> 
              </div>
@@ -119,4 +140,29 @@
     //         hiddenInputId: 'SelectedClientIds',
     //         selectedInputIds: 'SelectedClientIds'
     // });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initWysiwyg('#wysiwyg-editor', '#wysiwyg-toolbar', '#Description', '@Html.Raw(ViewBag.Description ?? "")')
+    })
+
+    function initWysiwyg(wysiwygEditorId, wysiwygToolbarId, textareaId, content) {
+        const textarea = document.getElementById(textareaId) 
+
+        const quill = new Quill(wysiwygEditorId, {
+            modules: {
+                syntax: true,
+                toolbar: wysiwygToolbarId
+            },
+            placeholder: 'Enter a description',
+            theme: "snow"
+        })
+
+        if (content)
+            quill.root.innerHTML = content;
+
+        quill.on('text-change', () => {
+            textarea.value = quill.root.innerHTML;
+        })
+
+    }
 </script>

@@ -1047,6 +1047,32 @@ input[type="checkbox"] {
     width: 100%;
 }
 
+
+#tagged-client {
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.client-tag {
+    position: absolute;
+    display: flex;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--blue-accent);
+    padding: 0.5rem;
+    border-radius: 14px; 
+}
+
+.client-tag .btn-remove {
+    margin-left: 0.5rem; 
+}
+
+#client-search-results {
+    display: none; 
+}
+
 /* badges */
 .badge {
     display: inline-block;
@@ -1294,3 +1320,48 @@ input[type="checkbox"] {
         text-align: center;
         margin-bottom: 2rem;
     }
+
+#Description {
+    display: none; 
+}
+
+.wysisyg textarea {
+    display: none;
+}
+
+#wysiwyg-editor {
+    width: 100%;
+    font-size: 0.9em;
+    font-weight: var(--font-regular);
+    font-family: var(--font-standard);
+    background-color: var(--form-background);
+    border: none;
+/*    border: 1px solid var(--border-color);*/
+    border-radius: 14px;
+    border-color: var(--border-color);
+    min-height: 150px;
+}
+.ql-editor {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+}
+    .ql-editor:focus {
+        border: 1px solid var(--blue-accent);
+    }
+
+#wysiwyg-toolbar {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: none;
+    border-radius: 0 0 14px 14px;
+    border-top: 1px solid var(--border-color);
+    border-color: var(--border-color);
+    background-color: transparent;
+    color: var(--text-color);
+}
+
