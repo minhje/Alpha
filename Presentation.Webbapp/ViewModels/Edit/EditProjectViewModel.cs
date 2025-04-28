@@ -6,10 +6,9 @@ namespace Presentation.WebApp.ViewModels.Edit;
 
 public class EditProjectViewModel
 {
-    public IEnumerable<SelectListItem> Clients { get; set; } = [];
-    public IEnumerable<SelectListItem> Members { get; set; } = [];
-    public IEnumerable<SelectListItem> Statuses { get; set; } = [];
-    public string? Image { get; set; }
+    [Display(Name = "Project Image", Prompt = "Select a image")]
+    [DataType(DataType.Upload)]
+    public IFormFile? ProjectImage { get; set; }
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Project Name", Prompt = "Enter project name")]
@@ -33,12 +32,12 @@ public class EditProjectViewModel
     public decimal? Budget { get; set; }
 
     [Required(ErrorMessage = "Required")]
-    [Display(Name = "Client", Prompt = "Select client")]
-    public Client Client { get; set; } = null!;
+    [Display(Name = "Client Name", Prompt = "Select client")]
+    public Client? Client { get; set; }
+    public List<string> SelectedClientIds { get; set; } = [];
 
-    [Required(ErrorMessage = "Required")]
     [Display(Name = "Project Manager", Prompt = "Select project manager")]
-    public User User { get; set; } = null!;
+    public User? Member { get; set; }
 
     [Display(Name = "Status", Prompt = "Select project status")]
     public Status? Status { get; set; }
