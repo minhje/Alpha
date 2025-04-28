@@ -35,11 +35,11 @@
              </div>
 
              <div class="form-group"> 
-                 <label asp-for="Description"></label> 
-                 <div class="wysiwyg"> 
-                   <textarea asp-for="Description"></textarea>
-                   <div id="wysiwyg-editor"></div>
-                    <div id="wysiwyg-toolbar">
+                 <label asp-for="Description"></label>
+                <div class="wysiwyg">
+                    <textarea asp-for="Description" id="Description"></textarea>
+                    <div id="wysiwyg-editor" class="wysiwyg-editor"></div>
+                    <div id="wysiwyg-toolbar" class="wysiwyg-toolbar">
                         <span class="ql-formats">
                             <button class="ql-bold"></button>
                             <button class="ql-italic"></button>
@@ -126,26 +126,28 @@
             console.error("One or more required elements for initTagSelector are missing.");
         }
 
-        initWysiwyg('#wysiwyg-editor', '#wysiwyg-toolbar', '#Description', '@Html.Raw(ViewBag.Description ?? "")')
+        initWysiwyg('wysiwyg-editor', 'wysiwyg-toolbar', 'Description', '@Html.Raw(ViewBag.Description ?? "")')
     });
 
-    function initWysiwyg(wysiwygEditorId, wysiwygToolbarId, textareaId, content) {
-        const textarea = document.getElementById(textareaId) 
+        function initWysiwyg(wysiwygEditorId, wysiwygToolbarId, textareaId, content) {
+        const textarea = document.getElementById(textareaId);
+        const editor = document.getElementById(wysiwygEditorId); // <-- fixat här!!
 
-        const quill = new Quill(wysiwygEditorId, {
+        const quill = new Quill(editor, {
             modules: {
                 syntax: true,
-                toolbar: wysiwygToolbarId
+                toolbar: '#' + wysiwygToolbarId // <-- fixat här!!
             },
             placeholder: 'Enter a description',
             theme: "snow"
-        })
+        });
 
         if (content)
             quill.root.innerHTML = content;
 
         quill.on('text-change', () => {
             textarea.value = quill.root.innerHTML;
-        })
+        });
     }
+
 </script>

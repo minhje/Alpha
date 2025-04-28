@@ -1375,22 +1375,23 @@ input[type="checkbox"] {
         margin-bottom: 2rem;
     }
 
-#Description {
+#Description, #edit-Description {
     display: none; 
 }
+
 
 .wysisyg textarea {
     display: none;
 }
 
-#wysiwyg-editor {
+#wysiwyg-editor, #edit-wysiwyg-editor {
     width: 100%;
     font-size: 0.9em;
     font-weight: var(--font-regular);
     font-family: var(--font-standard);
     background-color: var(--form-background);
     border: none;
-/*    border: 1px solid var(--border-color);*/
+    /*    border: 1px solid var(--border-color);*/
     border-radius: 14px;
     border-color: var(--border-color);
     min-height: 150px;
@@ -1403,7 +1404,7 @@ input[type="checkbox"] {
         border: 1px solid var(--blue-accent);
     }
 
-#wysiwyg-toolbar {
+#wysiwyg-toolbar, #edit-wysiwyg-toolbar {
     position: absolute;
     display: flex;
     align-items: center;
