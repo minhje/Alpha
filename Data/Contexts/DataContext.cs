@@ -12,4 +12,16 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public virtual DbSet<StatusEntity> Statuses { get; set; }
     public virtual DbSet<TagEntity> Tags { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ProjectEntity>()
+            .HasOne(p => p.Status)
+            .WithMany(s => s.Projects)
+            .HasForeignKey(p => p.StatusId)
+            .OnDelete(DeleteBehavior.Restrict); // Eller annan DeleteBehavior
+    }
+
+
 }

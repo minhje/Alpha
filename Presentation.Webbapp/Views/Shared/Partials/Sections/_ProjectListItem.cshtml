@@ -15,20 +15,38 @@
             </div>
         }
 
+
         <h6>@Model.ProjectName</h6>
         <p>@Model.Client</p>
-        <i class="fa-regular fa-ellipsis" data-modal="true" data-target="#editProjectModal"></i>
+
+        <div id="project-dropdown-container" class="dropdown-container">
+            <button type="button" data-type="dropdown" data-target="#project-dropdown-@Model.Id" class="btn-more">
+                <i class="fa-regular fa-ellipsis"></i>
+            </button>
+
+            <div id="project-dropdown-@Model.Id" class="project-dropdown hide">
+                <div class="dropdown-edit" data-modal="true" data-target="#editProjectModal">
+                    <i class="fa-duotone fa-solid fa-pen-line"></i>
+                    <span>Edit</span>
+                </div>
+                <div class="divider"></div>
+                <div class="dropdown-delete">
+                    <i class="fa-duotone fa-solid fa-trash-can"></i>
+                    <span>Delete</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="projects-card-main">
         <p>@Model.Description</p>
     </div>
 
-    <div class="projects-card-footer">
+    @* <div class="projects-card-footer">
         <div class="countdown"><i class="fa-duotone fa-solid fa-clock"></i> 1 week left</div>
         <div class="members">
             <img src=@Model.User class="circle"/>
         </div>
-    </div>
+    </div> *@
 </div>
 

@@ -13,7 +13,7 @@ public interface IProjectService
 {
     Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData);
     Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync();
-    Task<ProjectResult<Project>> GetProjectAsync(string id);
+    Task<ProjectResult<Project>> GetProjectAsync();
 }
 
 public class ProjectService(IProjectRepository projectRepository, IStatusService statusService, DataContext context) : IProjectService
@@ -21,6 +21,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IStatusService _statusService = statusService;
     private readonly DataContext _context = context;
+
 
     // Genererat av Chat GPT 4o för att kunna skapa ett projekt, haft problem med att kunna koppla SelectedClientIds till Clients i databasen. 
     public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
@@ -88,11 +89,12 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         return new ProjectResult<IEnumerable<Project>> { Succeeded = true, StatusCode = 200, Result = response.Result };
     }
 
-    public async Task<ProjectResult<Project>> GetProjectAsync(string id)
+
+    public async Task<ProjectResult<Project>> GetProjectAsync()
     {
         var response = await _projectRepository.GetAsync
         (
-            where: x => x.Id == id,
+            where: null,
             include => include.User!,
             include => include.Status,
             include => include.Client
@@ -100,6 +102,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
 
         return response.Succeeded
             ? new ProjectResult<Project> { Succeeded = true, StatusCode = 200, Result = response.Result }
-            : new ProjectResult<Project> { Succeeded = true, StatusCode = 404, Error = $"Project '{id}' not found." };
+            : new ProjectResult<Project> { Succeeded = true, StatusCode = 404, Error = $"Project not found." };
     }
+
 }

@@ -24,26 +24,29 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     public async Task<IActionResult> Index(int? statusId)
     {
         var projectServiceResult = await _projectService.GetProjectsAsync();
-        var projectViewModels = projectServiceResult.Result!
-            .ToList();
+        var allProjects = projectServiceResult.Result!.ToList();
 
-        if (statusId.HasValue)
+        // Filtrera projekten baserat på statusId
+        var filteredProjects = statusId.HasValue
+         ? allProjects.Where(p => p.Status?.Id == statusId.Value).ToList()
+         : allProjects;
+
+
+        foreach (var project in allProjects)
         {
-            projectViewModels = projectViewModels
-            .Where(p => p.Status != null && (int)p.Status.Id == statusId.Value)
-            .ToList();
-
+            Console.WriteLine($"Project: {project.ProjectName}, Status: {project.Status?.Id}");
         }
 
+        // Skapa ViewModel med räknare för varje status
         var viewModel = new ProjectViewModel(_clientService)
         {
             AddProjectFormData = new AddProjectViewModel(),
             EditProjectFormData = new EditProjectViewModel(),
-            Projects = projectViewModels,
+            Projects = filteredProjects,
 
-            AllCount = projectServiceResult.Result.Count(),
-            StartedCount = projectServiceResult.Result.Count(p => p.Status != null && (int)p.Status.Id == 1),
-            CompletedCount = projectServiceResult.Result.Count(p => p.Status != null && (int)p.Status.Id == 2)
+            AllCount = allProjects.Count,
+            StartedCount = allProjects.Count(p => p.Status != null && p.Status.Id == 1),
+            CompletedCount = allProjects.Count(p => p.Status != null && p.Status.Id == 2)
         };
 
         return View(viewModel);
