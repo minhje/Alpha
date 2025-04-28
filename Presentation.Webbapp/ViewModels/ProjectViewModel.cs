@@ -13,4 +13,7 @@ public class ProjectViewModel(IClientService clientService)
     public AddProjectViewModel AddProjectFormData { get; set; } = new();
     public EditProjectViewModel EditProjectFormData { get; set; } = new();
 
+    public int AllCount { get; set; }
+    public int CompletedCount { get; set; }
+    public int StartedCount { get; set; }
 }

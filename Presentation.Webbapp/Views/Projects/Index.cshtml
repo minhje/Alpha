@@ -13,10 +13,21 @@
         <button type="button" data-modal="true" data-target="#addProjectModal" class="btn btn-add btn-blue">Add Project</button>
     </header>
 
+    <div id="project-status-links">
+        <a href="@Url.Action("Index", new { statusId = (int?)null })">
+            ALL [@Model.AllCount]
+        </a> 
+        <a href="@Url.Action("Index", new { statusId = 1 })">
+            STARTED [@Model.StartedCount]
+        </a>
+        <a href="@Url.Action("Index", new { statusId = 2 })">
+            COMPLETED [@Model.CompletedCount]
+        </a> 
+    </div>
+
     <div class="project-list">
         <partial name="Partials/Sections/_ProjectList" model="Model.Projects"  />
     </div>
 </div>
-
 
 <script src="~/js/modals.js" asp-append-version="true"></script>

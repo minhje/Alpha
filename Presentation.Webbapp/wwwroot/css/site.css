@@ -1183,9 +1183,8 @@ input[type="checkbox"] {
 /* PROJECTS PAGE */
 #projects {
     display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 2rem;
-    height: 100%;
+    grid-template-rows: auto 1fr auto;
+    gap: 1.5rem;
 }
 
     #projects header {
@@ -1193,6 +1192,20 @@ input[type="checkbox"] {
         grid-template-columns: 1fr auto;
     }
 
+#project-status-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: var(--font-bold);
+    font-size: 15px;
+    color: var(--dark-600);
+}
+
+.project-list {
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr 1fr; 
+}
 .projects-card {
     height: 270px;
     width: 350px;

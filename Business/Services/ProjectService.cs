@@ -73,7 +73,6 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
 
-
     public async Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync()
     {
         var response = await _projectRepository.GetAllAsync
@@ -86,8 +85,6 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             include => include.Client
         );
 
-        // return response.MapTo<ProjectResult<IEnumerable<Project>>>();
-        // or
         return new ProjectResult<IEnumerable<Project>> { Succeeded = true, StatusCode = 200, Result = response.Result };
     }
 
