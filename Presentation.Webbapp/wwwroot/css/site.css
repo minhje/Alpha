@@ -1107,9 +1107,28 @@ input[type="checkbox"] {
     margin-left: 0.5rem; 
 }
 
-#client-search-results {
+#client-search-results, #edit-client-search-results {
     display: none; 
 }
+
+.field-group.with-dollar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-dollar {
+    position: absolute;
+    left: 1rem;
+    font-size: 1em;
+    color: var(--text-color);
+    pointer-events: none;
+}
+
+.field-group.with-dollar input {
+    padding-left: 2rem;
+}
+
 
 /* badges */
 .badge {

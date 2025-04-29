@@ -6,6 +6,7 @@ using Domain.Dtos;
 using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Presentation.WebApp.ViewModels;
 using Presentation.WebApp.ViewModels.Add;
 using Presentation.WebApp.ViewModels.Edit;
@@ -51,22 +52,6 @@ public class ProjectsController(IProjectService projectService, DataContext cont
 
         return View(viewModel);
     }
-    //[Route("projects")]
-    //public async Task<IActionResult> Index()
-    //{
-    //    var projectServiceResult = await _projectService.GetProjectsAsync();
-    //    var projectViewModels = projectServiceResult.Result!
-    //        .ToList();
-
-    //    var viewModel = new ProjectViewModel(_clientService)
-    //    {
-    //        AddProjectFormData = new AddProjectViewModel(),
-    //        EditProjectFormData = new EditProjectViewModel(),
-    //        Projects = projectViewModels
-    //    };
-
-    //    return View(viewModel);
-    //}
 
     // genererat av chat GPT 4o för att försöka få mappningen av "selectedClientsIds" till "Clients" för att kunna skapa ett nytt projekt.
     [HttpPost]
@@ -112,46 +97,57 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(string id)  // Här ändrar vi till string
+    {
+        var project = await _context.Projects
+            .Where(p => p.Id == id)
+            .Include(p => p.Client) 
+            .FirstOrDefaultAsync();
 
+        if (project == null)
+        {
+            return NotFound();
+        }
 
+        var model = new EditProjectViewModel
+        {
+            Id = project.Id,
+            ProjectName = project.ProjectName,
+            Client = project.Client?.ClientName,  // Antag att Client är en navigation property
+            Description = project.Description,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
+            Budget = project.Budget,
+            SelectedClientIds = project.ClientId,  // Exempel på att sätta klient-ID
+        };
 
-    //[HttpPost]
-    //public async Task<IActionResult> Add(AddProjectViewModel model)
-    //{
-    //    //ViewBag.Description = model.Description;
-    //    Console.WriteLine($"Request received at: {DateTime.UtcNow}");
+        return Json(model);
+    }
 
-    //    if (ModelState.IsValid)
-    //    {
-    //        var addProjectFormData = new AddProjectFormData
-    //        {
-    //            ProjectName = model.ProjectName,
-    //            StartDate = model.StartDate,
-    //            EndDate = model.EndDate,
-    //            Description = model.Description,
-    //            Budget = model.Budget,
-    //            SelectedClientIds = model.SelectedClientIds // Map selected client IDs
-    //        };
-
-    //        var result = await _projectService.CreateProjectAsync(addProjectFormData);
-    //        if (result.Succeeded)
-    //        {
-    //            return RedirectToAction("Index");
-    //        }
-    //    }
-
-    //    return View("Index", new ProjectViewModel(_clientService)
-    //    {
-    //        AddProjectFormData = model,
-    //        Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-    //    });
-    //}
 
     [HttpPost]
-    public IActionResult Update(EditProjectViewModel model)
+    public async Task<IActionResult> Edit(EditProjectViewModel model)
     {
-        return RedirectToAction("Index");
+        if (!ModelState.IsValid)
+            return View(model);
 
+        var project = await _context.Projects
+            .FirstOrDefaultAsync(p => p.Id == model.Id);
+
+        if (project == null)
+            return NotFound();
+
+        project.ProjectName = model.ProjectName;
+        project.Description = model.Description;
+        project.StartDate = model.StartDate;
+        project.EndDate = model.EndDate;
+        project.Budget = model.Budget;
+        project.ClientId = model.Client!; 
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Index");
     }
 
     [HttpPost]

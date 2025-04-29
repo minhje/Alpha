@@ -8,28 +8,28 @@
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
-        <form asp-action="Edit" asp-controller="Projects" method="post" novalidate>
+        <form asp-action="Edit" asp-controller="Projects" method="post" novalidate data-form="edit">
 
             <div class="image-previewer">
                 <img src="" class="image-preview" />
-                <input asp-for="ProjectImage" accept="image/*" class="hide" />
+                <input asp-for="ProjectImage" id="edit-ProjectImage" accept="image/*" class="hide" />
             </div>
 
             <div class="form-group">
                 <label asp-for="ProjectName"></label>
                 <div class="field-group">
-                    <input asp-for="ProjectName" />
+                    <input asp-for="ProjectName" id="edit-ProjectName" />
                     <span asp-validation-for="ProjectName"></span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label asp-for="Client"></label>
-                <div id="tagged-client" class="form-input form-tag-select">
-                    <input type="text" id="client-search" class="form-tag-input" placeholder="Add client..." />
+                <div id="edit-tagged-client" class="form-input form-tag-select">
+                    <input type="text" id="edit-client-search" class="form-tag-input" placeholder="Add client..." />
                     <label for="client-search" class="fa-solid fa-ellipsis"></label>
-                    <div id="client-search-results" class="search-results"></div>
-                    <input asp-for="Client" type="hidden" name="SelectedClientIds" id="SelectedClientIds" />
+                    <div id="edit-client-search-results" class="search-results"></div>
+                    <input asp-for="SelectedClientIds" type="hidden" name="SelectedClientIds" id="edit-SelectedClientIds" />
                     <span asp-validation-for="Client"></span>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
                     <div class="field-group">
-                        <input asp-for="StartDate" />
+                        <input asp-for="StartDate" id="edit-StartDate" />
                         <span asp-validation-for="StartDate"></span>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                 <div class="form-group">
                     <label asp-for="EndDate"></label>
                     <div class="field-group">
-                        <input asp-for="EndDate" />
+                        <input asp-for="EndDate" id="edit-EndDate" />
                         <span asp-validation-for="EndDate"></span>
                     </div>
                 </div>
@@ -91,8 +91,9 @@
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
-                <div class="field-group">
-                    <input asp-for="Budget" />
+                <div class="field-group with-dollar">
+                    <span class="input-dollar"><i class="fa-solid fa-dollar-sign"></i></span>
+                    <input asp-for="Budget" id="edit-Budget" />
                     <span asp-validation-for="Budget"></span>
                 </div>
             </div>
@@ -103,41 +104,41 @@
     </div>
 </div>
 
+
 <script>
     // Hjälp tagen av ChatGPT 4o för att få ut Clients korrekt.
     document.addEventListener("DOMContentLoaded", () => {
-        const clientSearchInput = document.getElementById('client-search');
-        const clientSearchResults = document.getElementById('client-search-results');
-        const selectedClientIds = document.getElementById('SelectedClientIds');
+        const clientSearchInput = document.getElementById('edit-client-search');
+        const clientSearchResults = document.getElementById('edit-client-search-results');
+        const selectedClientIds = document.getElementById('edit-SelectedClientIds');
 
         if (clientSearchInput && clientSearchResults && selectedClientIds) {
-               initTagSelector({
-               containerId: 'tagged-client',
-               inputId: 'client-search',
-               resultsId: 'client-search-results',
-               searchUrl: (query) => `/Clients/SearchClients?term=${encodeURIComponent(query)}`,
-               displayProperty: 'clientName',
-               tagClass: 'client-tag',
-               emptyMessage: 'No clients found.',
-               hiddenInputId: 'SelectedClientIds',
-               preselected: []
+            initTagSelector({
+                containerId: 'edit-tagged-client',
+                inputId: 'edit-client-search',
+                resultsId: 'edit-client-search-results',
+                searchUrl: (query) => `/Clients/SearchClients?term=${encodeURIComponent(query)}`,
+                displayProperty: 'clientName',
+                tagClass: 'client-tag',
+                emptyMessage: 'No clients found.',
+                hiddenInputId: 'edit-SelectedClientIds',
+                preselected: [] 
             });
-
         } else {
             console.error("One or more required elements for initTagSelector are missing.");
         }
 
-        initWysiwyg('edit-wysiwyg-editor', 'edit-wysiwyg-toolbar', 'edit-Description', '@Html.Raw(ViewBag.Description ?? "")')
+        initWysiwyg('edit-wysiwyg-editor', 'edit-wysiwyg-toolbar', 'Description', '@Html.Raw(ViewBag.Description ?? "")')
     });
 
         function initWysiwyg(wysiwygEditorId, wysiwygToolbarId, textareaId, content) {
         const textarea = document.getElementById(textareaId);
-        const editor = document.getElementById(wysiwygEditorId); // <-- fixat här!!
+        const editor = document.getElementById(wysiwygEditorId); 
 
         const quill = new Quill(editor, {
             modules: {
                 syntax: true,
-                toolbar: '#' + wysiwygToolbarId // <-- fixat här!!
+                toolbar: '#' + wysiwygToolbarId
             },
             placeholder: 'Enter a description',
             theme: "snow"

@@ -16,9 +16,9 @@ public class Project
 
     public decimal? Budget { get; set; }
 
-    public Client Client { get; set; } = null!;
+    public Client? Client { get; set; } 
 
-    public User User { get; set; } = null!;
+    public User? User { get; set; } 
 
-    public Status Status { get; set; } = null!;
+    public Status? Status { get; set; } 
 }
