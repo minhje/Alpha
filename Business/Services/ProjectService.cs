@@ -13,7 +13,7 @@ public interface IProjectService
 {
     Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData);
     Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync();
-    Task<ProjectResult<Project>> GetProjectAsync();
+    Task<ProjectResult<Project>> GetProjectAsync(string id);
 }
 
 public class ProjectService(IProjectRepository projectRepository, IStatusService statusService, DataContext context) : IProjectService
@@ -26,24 +26,23 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     // Genererat av Chat GPT 4o för att kunna skapa ett projekt, haft problem med att kunna koppla SelectedClientIds till Clients i databasen. 
     public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
     {
-        if (formData == null || string.IsNullOrEmpty(formData.ProjectName) || formData.SelectedClientIds == null || !formData.SelectedClientIds.Any())
+        if (formData == null || string.IsNullOrEmpty(formData.ProjectName) || string.IsNullOrEmpty(formData.SelectedClientId))
         {
             return new ProjectResult
             { Succeeded = false, StatusCode = 400, Error = "Required fields are missing." };
         }
 
-        // Retrieve all clients based on SelectedClientIds
-        var clientEntities = await _context.Clients
-            .Where(c => formData.SelectedClientIds.Contains(c.Id))
-            .ToListAsync();
+        // Hämta klienten baserat på det valda ClientId
+        var clientEntity = await _context.Clients
+            .FirstOrDefaultAsync(c => c.Id == formData.SelectedClientId); // Här letar vi bara efter en enskild klient
 
-        if (!clientEntities.Any())
+        if (clientEntity == null)
         {
             return new ProjectResult
-            { Succeeded = false, StatusCode = 404, Error = "No valid clients found for the provided IDs." };
+            { Succeeded = false, StatusCode = 404, Error = "No valid client found for the provided ID." };
         }
 
-        // Retrieve the default status
+        // Hämta statusen (default)
         var statusResult = await _statusService.GetStatusByIdAsync(1);
         var status = statusResult.Result;
 
@@ -53,7 +52,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             { Succeeded = false, StatusCode = 500, Error = "Default status could not be retrieved." };
         }
 
-        // Create the ProjectEntity
+        // Skapa projektet
         var projectEntity = new ProjectEntity
         {
             ProjectName = formData.ProjectName,
@@ -62,17 +61,69 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             EndDate = formData.EndDate,
             Budget = formData.Budget,
             StatusId = status.Id,
-            ClientId = clientEntities.First().Id, // Assuming one client per project
+            ClientId = clientEntity.Id, // Nu använder vi det valda klient-ID:t
             Created = DateTime.UtcNow
         };
 
-        // Save the project to the database
+        // Spara projektet i databasen
         var result = await _projectRepository.AddAsync(projectEntity);
 
         return result.Succeeded
             ? new ProjectResult { Succeeded = true, StatusCode = 201 }
             : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
+
+
+
+    //public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
+    //{
+    //    if (formData == null || string.IsNullOrEmpty(formData.ProjectName) || formData.SelectedClientId == null || !formData.SelectedClientId.Any())
+    //    {
+    //        return new ProjectResult
+    //        { Succeeded = false, StatusCode = 400, Error = "Required fields are missing." };
+    //    }
+
+    //    // Retrieve all clients based on SelectedClientIds
+    //    var clientEntities = await _context.Clients
+    //        .Where(c => formData.SelectedClientId.Contains(c.Id))
+    //        .ToListAsync();
+
+    //    if (!clientEntities.Any())
+    //    {
+    //        return new ProjectResult
+    //        { Succeeded = false, StatusCode = 404, Error = "No valid clients found for the provided IDs." };
+    //    }
+
+    //    // Retrieve the default status
+    //    var statusResult = await _statusService.GetStatusByIdAsync(1);
+    //    var status = statusResult.Result;
+
+    //    if (status == null)
+    //    {
+    //        return new ProjectResult
+    //        { Succeeded = false, StatusCode = 500, Error = "Default status could not be retrieved." };
+    //    }
+
+    //    // Create the ProjectEntity
+    //    var projectEntity = new ProjectEntity
+    //    {
+    //        ProjectName = formData.ProjectName,
+    //        Description = formData.Description,
+    //        StartDate = formData.StartDate,
+    //        EndDate = formData.EndDate,
+    //        Budget = formData.Budget,
+    //        StatusId = status.Id,
+    //        ClientId = clientEntities.First().Id, // Assuming one client per project
+    //        Created = DateTime.UtcNow
+    //    };
+
+    //    // Save the project to the database
+    //    var result = await _projectRepository.AddAsync(projectEntity);
+
+    //    return result.Succeeded
+    //        ? new ProjectResult { Succeeded = true, StatusCode = 201 }
+    //        : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+    //}
 
     public async Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync()
     {
@@ -90,15 +141,18 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     }
 
 
-    public async Task<ProjectResult<Project>> GetProjectAsync()
+    public async Task<ProjectResult<Project>> GetProjectAsync(string id)
+
     {
         var response = await _projectRepository.GetAsync
         (
-            where: null,
+            where: p => p.Id == id,
             include => include.User!,
             include => include.Status,
             include => include.Client
         );
+
+
 
         return response.Succeeded
             ? new ProjectResult<Project> { Succeeded = true, StatusCode = 200, Result = response.Result }

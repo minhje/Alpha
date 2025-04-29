@@ -10,6 +10,105 @@
 
         <form asp-action="Add" asp-controller="Projects" method="post" novalidate>
 
+            <div class="image-previewer">
+                <img src="" class="image-preview" />
+                <input asp-for="ProjectImage" accept="image/*" class="hide" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ProjectName"></label>
+                <div class="field-group">
+                    <input asp-for="ProjectName" />
+                    <span asp-validation-for="ProjectName"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SelectedClientId"></label>
+                <div class="field-group">
+                    <select asp-for="SelectedClientId" asp-items="Model.ClientOptions" class="form-control">
+                        <option value="">Select a client</option> 
+                    </select>
+                    <span asp-validation-for="SelectedClientId"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description"></label>
+                <div class="wysiwyg">
+                    <textarea asp-for="Description" id="Description"></textarea>
+                    <div id="wysiwyg-editor" class="wysiwyg-editor"></div>
+                    <div id="wysiwyg-toolbar" class="wysiwyg-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-align" value=""></button>
+                            <button class="ql-align" value="center"></button>
+                            <button class="ql-align" value="right"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-list" value="ordered"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </div>
+                    <span asp-validation-for="Description"></span>
+                </div>
+            </div>
+
+            <div class="form-horizontal-group">
+                <div class="form-group">
+                    <label asp-for="StartDate"></label>
+                    <div class="field-group">
+                        <input asp-for="StartDate" />
+                        <span asp-validation-for="StartDate"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="EndDate"></label>
+                    <div class="field-group">
+                        <input asp-for="EndDate" />
+                        <span asp-validation-for="EndDate"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Budget"></label>
+                <div class="field-group with-dollar">
+                    <span class="input-dollar"><i class="fa-solid fa-dollar-sign"></i></span>
+                    <input asp-for="Budget" />
+                    <span asp-validation-for="Budget"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-submit btn-blue">Create</button>
+        </form>
+
+    </div>
+</div>
+
+
+
+
+@* @model AddProjectViewModel
+
+<div id="addProjectModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h4>Add Project</h4>
+            <button type="button" class="btn-close" data-close="true"></button>
+        </div>
+
+        <form asp-action="Add" asp-controller="Projects" method="post" novalidate>
+
             <div class="image-previewer"> 
                 <img src="" class="image-preview" /> 
                 <input asp-for="ProjectImage" accept="image/*" class="hide" /> 
@@ -89,7 +188,7 @@
                  </div> 
                  </div> *@
 
-            <div class="form-group">
+  @*           <div class="form-group">
                 <label asp-for="Budget"></label>
                 <div class="field-group with-dollar">
                     <span class="input-dollar"><i class="fa-solid fa-dollar-sign"></i></span>
@@ -102,4 +201,4 @@
         </form>
 
     </div>
-</div>
+</div>  *@

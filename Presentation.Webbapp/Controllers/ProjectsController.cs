@@ -6,6 +6,7 @@ using Domain.Dtos;
 using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Presentation.WebApp.ViewModels;
 using Presentation.WebApp.ViewModels.Add;
@@ -29,103 +30,142 @@ public class ProjectsController(IProjectService projectService, DataContext cont
 
         // Filtrera projekten baserat på statusId
         var filteredProjects = statusId.HasValue
-         ? allProjects.Where(p => p.Status?.Id == statusId.Value).ToList()
-         : allProjects;
-
+            ? allProjects.Where(p => p.Status?.Id == statusId.Value).ToList()
+            : allProjects;
 
         foreach (var project in allProjects)
         {
             Console.WriteLine($"Project: {project.ProjectName}, Status: {project.Status?.Id}");
         }
 
-        // Skapa ViewModel med räknare för varje status
+        // Skapa ViewModel med dropdown-data
         var viewModel = new ProjectViewModel(_clientService)
         {
-            AddProjectFormData = new AddProjectViewModel(),
+            AddProjectFormData = new AddProjectViewModel
+            {
+                ClientOptions = _context.Clients
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id,
+                        Text = c.ClientName
+                    }).ToList()
+            },
             EditProjectFormData = new EditProjectViewModel(),
             Projects = filteredProjects,
 
             AllCount = allProjects.Count,
-            StartedCount = allProjects.Count(p => p.Status != null && p.Status.Id == 1),
-            CompletedCount = allProjects.Count(p => p.Status != null && p.Status.Id == 2)
+            StartedCount = allProjects.Count(p => p.Status?.Id == 1),
+            CompletedCount = allProjects.Count(p => p.Status?.Id == 2)
         };
 
         return View(viewModel);
     }
 
-    // genererat av chat GPT 4o för att försöka få mappningen av "selectedClientsIds" till "Clients" för att kunna skapa ett nytt projekt.
     [HttpPost]
-    public async Task<IActionResult> Add(AddProjectViewModel model)
+    public IActionResult Add(AddProjectViewModel model)
     {
-        Console.WriteLine($"Add method called at: {DateTime.UtcNow}");
-        Console.WriteLine($"Project Name: {model.ProjectName}");
-        Console.WriteLine($"Selected Client IDs: {string.Join(", ", model.SelectedClientIds)}");
-
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            Console.WriteLine("ModelState is valid. Proceeding with project creation.");
-            var addProjectFormData = new AddProjectFormData
-            {
-                ProjectName = model.ProjectName,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
-                Description = model.Description,
-                Budget = model.Budget,
-                SelectedClientIds = model.SelectedClientIds
-            };
+            model.ClientOptions = _context.Clients
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.ClientName
+                }).ToList();
 
-            var result = await _projectService.CreateProjectAsync(addProjectFormData);
-            if (result.Succeeded)
-            {
-                Console.WriteLine("Project created successfully.");
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                Console.WriteLine($"Project creation failed: {result.Error}");
-            }
-        }
-        else
-        {
-            Console.WriteLine("ModelState is invalid.");
+            return View(model);
         }
 
-        return View("Index", new ProjectViewModel(_clientService)
+        var addProjectFormData = new AddProjectFormData
         {
-            AddProjectFormData = model,
-            Projects = (await _projectService.GetProjectsAsync()).Result!.ToList()
-        });
+            ProjectName = model.ProjectName,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate,
+            Description = model.Description,
+            Budget = model.Budget,
+            SelectedClientId = model.SelectedClientId 
+        };
+
+        var result = _projectService.CreateProjectAsync(addProjectFormData).Result;
+
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index");
+        }
+
+        ModelState.AddModelError("", result.Error);
+        model.ClientOptions = _context.Clients
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.ClientName
+            }).ToList();
+
+        return View(model);
+    }
+
+
+
+    [HttpGet]
+    public IActionResult Add()
+    {
+        var model = new AddProjectViewModel
+        {
+            ClientOptions = _context.Clients
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id,
+                    Text = c.ClientName
+                }).ToList()
+        };
+
+        return View(model);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(string id) 
+    public async Task<IActionResult> Edit(string id)
     {
-        var project = await _context.Projects
-            .Where(p => p.Id == id)
-            .Include(p => p.Client) 
-            .FirstOrDefaultAsync();
+        var result = await _projectService.GetProjectAsync(id);
 
-        if (project == null)
-        {
+        if (!result.Succeeded || result.Result == null)
             return NotFound();
+
+        var project = result.Result;
+
+        var allClients = await _context.Clients.ToListAsync(); // felsökning
+
+        if (!allClients.Any())
+        {
+            Console.WriteLine("❌ Inga klienter hittades i databasen.");
+        }
+        else
+        {
+            Console.WriteLine($"✅ {allClients.Count} klienter hittades.");
         }
 
+
+        // Fyll modellen du använder i formuläret
         var model = new EditProjectViewModel
         {
             Id = project.Id,
             ProjectName = project.ProjectName,
-            Client = project.Client?.ClientName,
             Description = project.Description,
             StartDate = project.StartDate,
             EndDate = project.EndDate,
             Budget = project.Budget,
-            SelectedClientIds = project.ClientId,
+            SelectedClientId = project.Client?.Id,
+            Clients = await _context.Clients.Select(c => new SelectListItem
+            {
+                Value = c.Id,
+                Text = c.ClientName,
+            }).ToListAsync()
         };
 
-        return Json(model);
+        return PartialView("_EditProjectPartial", model);
     }
 
-    // genererat av chat GPT 4o för att kunna uppdatera ett projekt
+
+
     [HttpPost]
     public async Task<IActionResult> Edit(EditProjectViewModel model)
     {
@@ -146,12 +186,20 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         project.StartDate = model.StartDate;
         project.EndDate = model.EndDate;
         project.Budget = model.Budget;
-        project.ClientId = model.SelectedClientIds; // Kontrollera att detta mappas korrekt
+        project.ClientId = model.SelectedClientId; // Se till att klientens ID sparas korrekt
+
+        // Om en bild är vald, uppdatera den (om det behövs)
+        if (model.ProjectImage != null)
+        {
+            // Här kan du lägga till logik för att spara bilden och uppdatera path
+            // project.ImagePath = "new_image_path";
+        }
 
         await _context.SaveChangesAsync();
 
-        return Ok(new { success = true });
+        return RedirectToAction("Index");  // Eller den sida du vill navigera till efter uppdatering
     }
+
 
 
     [HttpPost]

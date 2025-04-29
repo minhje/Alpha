@@ -11,7 +11,7 @@ public class EditProjectFormData
     public DateTime? EndDate { get; set; }
     public decimal? Budget { get; set; }
     public Client Client { get; set; } = null!;
-    public List<string> SelectedClientIds { get; set; } = [];
+    public string? SelectedClientId { get; set; }
     public string? MemberId { get; set; }
     public int StatusId { get; set; }
 
