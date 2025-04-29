@@ -98,7 +98,7 @@ public class ProjectsController(IProjectService projectService, DataContext cont
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(string id)  // Här ändrar vi till string
+    public async Task<IActionResult> Edit(string id) 
     {
         var project = await _context.Projects
             .Where(p => p.Id == id)
@@ -114,41 +114,45 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         {
             Id = project.Id,
             ProjectName = project.ProjectName,
-            Client = project.Client?.ClientName,  // Antag att Client är en navigation property
+            Client = project.Client?.ClientName,
             Description = project.Description,
             StartDate = project.StartDate,
             EndDate = project.EndDate,
             Budget = project.Budget,
-            SelectedClientIds = project.ClientId,  // Exempel på att sätta klient-ID
+            SelectedClientIds = project.ClientId,
         };
 
         return Json(model);
     }
 
-
+    // genererat av chat GPT 4o för att kunna uppdatera ett projekt
     [HttpPost]
     public async Task<IActionResult> Edit(EditProjectViewModel model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            return BadRequest(new { errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
+        }
 
-        var project = await _context.Projects
-            .FirstOrDefaultAsync(p => p.Id == model.Id);
-
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == model.Id);
         if (project == null)
+        {
             return NotFound();
+        }
 
+        // Uppdatera projektet med data från formuläret
         project.ProjectName = model.ProjectName;
         project.Description = model.Description;
         project.StartDate = model.StartDate;
         project.EndDate = model.EndDate;
         project.Budget = model.Budget;
-        project.ClientId = model.Client!; 
+        project.ClientId = model.SelectedClientIds; // Kontrollera att detta mappas korrekt
 
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("Index");
+        return Ok(new { success = true });
     }
+
 
     [HttpPost]
     public IActionResult Delete(string id)
