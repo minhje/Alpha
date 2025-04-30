@@ -28,11 +28,11 @@ public class AdminController(IUserService userService, IProjectService projectSe
         var projectResult = await _projectService.GetProjectsAsync();
         var projects = projectResult.Result;
 
-        var viewModel = new ProjectViewModel(_clientService)
+        var viewModel = new ProjectViewModel()
         {
             Projects = projects ?? [],
             AddProjectFormData = new AddProjectFormData(),
-            EditProjectFormData = new EditProjectViewModel()
+            EditProjectFormData = new EditProjectFormData()
         };
 
         return View(viewModel);

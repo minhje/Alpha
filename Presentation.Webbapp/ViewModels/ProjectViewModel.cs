@@ -6,13 +6,11 @@ using Presentation.WebApp.ViewModels.Edit;
 
 namespace Presentation.WebApp.ViewModels;
 
-public class ProjectViewModel(IClientService clientService)
+public class ProjectViewModel()
 {
-    private readonly IClientService _clientService = clientService;
-
     public IEnumerable<Project> Projects { get; set; } = [];
     public AddProjectFormData AddProjectFormData { get; set; } = new();
-    public EditProjectViewModel EditProjectFormData { get; set; } = new();
+    public EditProjectFormData EditProjectFormData { get; set; } = new();
 
     public int AllCount { get; set; } 
     public int CompletedCount { get; set; }

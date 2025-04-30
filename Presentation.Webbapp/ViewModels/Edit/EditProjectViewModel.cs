@@ -35,7 +35,7 @@ namespace Presentation.WebApp.ViewModels.Add
         [Required(ErrorMessage = "You must select a client.")]
         [Display(Name = "Client")]
         public string? SelectedClientId { get; set; }
-        public IEnumerable<SelectListItem> Clients { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> ClientOptions { get; set; } = new List<SelectListItem>();
 
         [Display(Name = "Project Manager", Prompt = "Select project manager")]
         public User? Member { get; set; }

@@ -143,4 +143,10 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
             return new RepositoryResult<bool> { Succeeded = false, StatusCode = 500, Error = ex.Message };
         }
     }
+
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
+
 }

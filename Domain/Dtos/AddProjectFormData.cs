@@ -35,8 +35,7 @@ public class AddProjectFormData
     [Required(ErrorMessage = "You must select a client.")]
     [Display(Name = "Client")]
     public string? SelectedClientId { get; set; }
-
-    public IEnumerable<SelectListItem> ClientOptions { get; set; } = new List<SelectListItem>();
+    public IEnumerable<SelectListItem> ClientOptions { get; set; } = [];
 
     [Display(Name = "Project Manager", Prompt = "Select project manager")]
     public User? Member { get; set; }

@@ -1,32 +1,22 @@
-﻿using Business.Models;
-using Business.Services;
-using Data.Contexts;
-using Data.Entities;
+﻿using Business.Services;
 using Domain.Dtos;
-using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Presentation.WebApp.ViewModels;
 using Presentation.WebApp.ViewModels.Add;
-using Presentation.WebApp.ViewModels.Edit;
-using System.Text.Json;
 
 namespace Presentation.WebApp.Controllers;
 
-public class ProjectsController(IProjectService projectService, DataContext context, IClientService clientService) : Controller
+public class ProjectsController(IProjectService projectService) : Controller
 {
     private readonly IProjectService _projectService = projectService;
-    private readonly DataContext _context = context;
-    private readonly IClientService _clientService = clientService;
-
 
     [Route("projects")]
     public async Task<IActionResult> Index(int? statusId, AddProjectViewModel model)
     {
         var projectServiceResult = await _projectService.GetProjectsAsync();
         var allProjects = projectServiceResult.Result!.ToList();
+
         ViewBag.Description = model.Description;
 
 
@@ -35,26 +25,14 @@ public class ProjectsController(IProjectService projectService, DataContext cont
             ? allProjects.Where(p => p.Status?.Id == statusId.Value).ToList()
             : allProjects;
 
-        foreach (var project in allProjects)
-        {
-            Console.WriteLine($"Project: {project.ProjectName}, Status: {project.Status?.Id}");
-        }
-
-        // Skapa ViewModel med dropdown-data
-        var viewModel = new ProjectViewModel(_clientService)
+        var viewModel = new ProjectViewModel
         {
             AddProjectFormData = new AddProjectFormData
             {
-                ClientOptions = _context.Clients
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id,
-                        Text = c.ClientName
-                    }).ToList()
+                ClientOptions = await _projectService.GetClientSelectListAsync()
             },
-            EditProjectFormData = new EditProjectViewModel(),
+            EditProjectFormData = new EditProjectFormData(),
             Projects = filteredProjects,
-
             AllCount = allProjects.Count,
             StartedCount = allProjects.Count(p => p.Status?.Id == 1),
             CompletedCount = allProjects.Count(p => p.Status?.Id == 2)
@@ -63,13 +41,6 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         return View(viewModel);
     }
 
-    //public IActionResult Index(AddProjectViewModel model)
-    //{
-    //    ViewBag.Description = model.Description;
-
-    //    return View();
-    //}
-
     [HttpPost]
     public async Task<IActionResult> Add(AddProjectFormData formData)
     {
@@ -77,18 +48,7 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         {
             var errors = ModelState.Where(x => x.Value?.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value?.Errors.Select(x => x.ErrorMessage).ToArray());
             return BadRequest(new { success = false, errors });
-
-            //model.ClientOptions = _context.Clients
-            //    .Select(c => new SelectListItem
-            //    {
-            //        Value = c.Id.ToString(),
-            //        Text = c.ClientName
-            //    }).ToList();
-
-            //return View(model);
         }
-
-       
 
         var result = await _projectService.CreateProjectAsync(formData);
 
@@ -97,59 +57,28 @@ public class ProjectsController(IProjectService projectService, DataContext cont
             return Ok();
         }
 
-        //ModelState.AddModelError("", result.Error);
-        //model.ClientOptions = _context.Clients
-        //    .Select(c => new SelectListItem
-        //    {
-        //        Value = c.Id.ToString(),
-        //        Text = c.ClientName
-        //    }).ToList();
-
         return Conflict();
     }
-
-
-
-    //[HttpGet]
-    //public IActionResult Add()
-    //{
-    //    var model = new AddProjectViewModel
-    //    {
-    //        ClientOptions = _context.Clients
-    //            .Select(c => new SelectListItem
-    //            {
-    //                Value = c.Id,
-    //                Text = c.ClientName
-    //            }).ToList()
-    //    };
-
-    //    return View(model);
-    //}
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
         var result = await _projectService.GetProjectAsync(id);
-
-        if (!result.Succeeded || result.Result == null)
-            return NotFound();
-
         var project = result.Result;
+        var model = await BuildEditProjectViewModel(result.Result!);
 
-        var allClients = await _context.Clients.ToListAsync(); // felsökning
+        return PartialView("_EditProjectPartial", model);
+    }
 
-        if (!allClients.Any())
-        {
-            Console.WriteLine(" Inga klienter hittades i databasen.");
-        }
-        else
-        {
-            Console.WriteLine($" {allClients.Count} klienter hittades.");
-        }
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditProjectViewModel model)
+    {
+        return RedirectToAction("Index");
 
-
-        // Fyll modellen du använder i formuläret
-        var model = new EditProjectViewModel
+    }
+    private async Task<EditProjectViewModel> BuildEditProjectViewModel(Project project)
+    {
+        return new EditProjectViewModel
         {
             Id = project.Id,
             ProjectName = project.ProjectName,
@@ -158,53 +87,9 @@ public class ProjectsController(IProjectService projectService, DataContext cont
             EndDate = project.EndDate,
             Budget = project.Budget,
             SelectedClientId = project.Client?.Id,
-            Clients = await _context.Clients.Select(c => new SelectListItem
-            {
-                Value = c.Id,
-                Text = c.ClientName,
-            }).ToListAsync()
+            ClientOptions = await _projectService.GetClientSelectListAsync()
         };
-
-        return PartialView("_EditProjectPartial", model);
     }
-
-
-
-    [HttpPost]
-    public async Task<IActionResult> Edit(EditProjectViewModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(new { errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
-        }
-
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == model.Id);
-        if (project == null)
-        {
-            return NotFound();
-        }
-
-        // Uppdatera projektet med data från formuläret
-        project.ProjectName = model.ProjectName;
-        project.Description = model.Description;
-        project.StartDate = model.StartDate;
-        project.EndDate = model.EndDate;
-        project.Budget = model.Budget;
-        project.ClientId = model.SelectedClientId; // Se till att klientens ID sparas korrekt
-
-        // Om en bild är vald, uppdatera den (om det behövs)
-        if (model.ProjectImage != null)
-        {
-            // Här kan du lägga till logik för att spara bilden och uppdatera path
-            // project.ImagePath = "new_image_path";
-        }
-
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction("Index");  // Eller den sida du vill navigera till efter uppdatering
-    }
-
-
 
     [HttpPost]
     public IActionResult Delete(string id)

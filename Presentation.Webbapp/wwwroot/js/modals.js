@@ -21,11 +21,11 @@
                 const html = await response.text(); // hämta HTML istället
                 modal.innerHTML = html;
 
-    // Initiera WYSIWYG efter att ny HTML är laddad
-    initWysiwygEditor(modal);
-} else {
-    console.error('Failed to fetch project partial view');
-}
+    
+                            initWysiwygEditor(modal);
+                        } else {
+                            console.error('Failed to fetch project partial view');
+                        }
 
                         //const response = await fetch(`/Projects/Edit?id=${projectId}`);
                         //if (response.ok) {

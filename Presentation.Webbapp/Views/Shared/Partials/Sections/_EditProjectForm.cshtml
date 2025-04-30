@@ -1,4 +1,4 @@
-﻿@model EditProjectViewModel
+﻿@model EditProjectFormData
 
 <div id="editProjectModal" class="modal">
     <div class="modal-content">
@@ -26,7 +26,7 @@
             <div class="form-group">
                 <label asp-for="SelectedClientId">Client</label>
                 <div class="field-group">
-                    <select asp-for="SelectedClientId" asp-items="Model.Clients" id="edit-SelectedClientId">
+                    <select asp-for="SelectedClientId" asp-items="Model.ClientOptions" id="edit-SelectedClientId">
                         <option value="">Select a client</option>
                     </select>
                     <span asp-validation-for="SelectedClientId"></span>
