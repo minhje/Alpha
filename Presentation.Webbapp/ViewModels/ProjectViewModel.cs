@@ -1,4 +1,5 @@
 ﻿using Business.Services;
+using Domain.Dtos;
 using Domain.Models;
 using Presentation.WebApp.ViewModels.Add;
 using Presentation.WebApp.ViewModels.Edit;
@@ -10,7 +11,7 @@ public class ProjectViewModel(IClientService clientService)
     private readonly IClientService _clientService = clientService;
 
     public IEnumerable<Project> Projects { get; set; } = [];
-    public AddProjectViewModel AddProjectFormData { get; set; } = new();
+    public AddProjectFormData AddProjectFormData { get; set; } = new();
     public EditProjectViewModel EditProjectFormData { get; set; } = new();
 
     public int AllCount { get; set; } 

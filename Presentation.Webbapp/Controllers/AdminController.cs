@@ -1,4 +1,5 @@
 ﻿using Business.Services;
+using Domain.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.WebApp.ViewModels;
@@ -30,7 +31,7 @@ public class AdminController(IUserService userService, IProjectService projectSe
         var viewModel = new ProjectViewModel(_clientService)
         {
             Projects = projects ?? [],
-            AddProjectFormData = new AddProjectViewModel(),
+            AddProjectFormData = new AddProjectFormData(),
             EditProjectFormData = new EditProjectViewModel()
         };
 

@@ -23,10 +23,12 @@ public class ProjectsController(IProjectService projectService, DataContext cont
 
 
     [Route("projects")]
-    public async Task<IActionResult> Index(int? statusId)
+    public async Task<IActionResult> Index(int? statusId, AddProjectViewModel model)
     {
         var projectServiceResult = await _projectService.GetProjectsAsync();
         var allProjects = projectServiceResult.Result!.ToList();
+        ViewBag.Description = model.Description;
+
 
         // Filtrera projekten baserat på statusId
         var filteredProjects = statusId.HasValue
@@ -41,7 +43,7 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         // Skapa ViewModel med dropdown-data
         var viewModel = new ProjectViewModel(_clientService)
         {
-            AddProjectFormData = new AddProjectViewModel
+            AddProjectFormData = new AddProjectFormData
             {
                 ClientOptions = _context.Clients
                     .Select(c => new SelectListItem
@@ -61,66 +63,68 @@ public class ProjectsController(IProjectService projectService, DataContext cont
         return View(viewModel);
     }
 
+    //public IActionResult Index(AddProjectViewModel model)
+    //{
+    //    ViewBag.Description = model.Description;
+
+    //    return View();
+    //}
+
     [HttpPost]
-    public IActionResult Add(AddProjectViewModel model)
+    public async Task<IActionResult> Add(AddProjectFormData formData)
     {
         if (!ModelState.IsValid)
         {
-            model.ClientOptions = _context.Clients
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.ClientName
-                }).ToList();
+            var errors = ModelState.Where(x => x.Value?.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value?.Errors.Select(x => x.ErrorMessage).ToArray());
+            return BadRequest(new { success = false, errors });
 
-            return View(model);
+            //model.ClientOptions = _context.Clients
+            //    .Select(c => new SelectListItem
+            //    {
+            //        Value = c.Id.ToString(),
+            //        Text = c.ClientName
+            //    }).ToList();
+
+            //return View(model);
         }
 
-        var addProjectFormData = new AddProjectFormData
-        {
-            ProjectName = model.ProjectName,
-            StartDate = model.StartDate,
-            EndDate = model.EndDate,
-            Description = model.Description,
-            Budget = model.Budget,
-            SelectedClientId = model.SelectedClientId 
-        };
+       
 
-        var result = _projectService.CreateProjectAsync(addProjectFormData).Result;
+        var result = await _projectService.CreateProjectAsync(formData);
 
         if (result.Succeeded)
         {
-            return RedirectToAction("Index");
+            return Ok();
         }
 
-        ModelState.AddModelError("", result.Error);
-        model.ClientOptions = _context.Clients
-            .Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.ClientName
-            }).ToList();
+        //ModelState.AddModelError("", result.Error);
+        //model.ClientOptions = _context.Clients
+        //    .Select(c => new SelectListItem
+        //    {
+        //        Value = c.Id.ToString(),
+        //        Text = c.ClientName
+        //    }).ToList();
 
-        return View(model);
+        return Conflict();
     }
 
 
 
-    [HttpGet]
-    public IActionResult Add()
-    {
-        var model = new AddProjectViewModel
-        {
-            ClientOptions = _context.Clients
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id,
-                    Text = c.ClientName
-                }).ToList()
-        };
+    //[HttpGet]
+    //public IActionResult Add()
+    //{
+    //    var model = new AddProjectViewModel
+    //    {
+    //        ClientOptions = _context.Clients
+    //            .Select(c => new SelectListItem
+    //            {
+    //                Value = c.Id,
+    //                Text = c.ClientName
+    //            }).ToList()
+    //    };
 
-        return View(model);
-    }
+    //    return View(model);
+    //}
 
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
@@ -136,11 +140,11 @@ public class ProjectsController(IProjectService projectService, DataContext cont
 
         if (!allClients.Any())
         {
-            Console.WriteLine("❌ Inga klienter hittades i databasen.");
+            Console.WriteLine(" Inga klienter hittades i databasen.");
         }
         else
         {
-            Console.WriteLine($"✅ {allClients.Count} klienter hittades.");
+            Console.WriteLine($" {allClients.Count} klienter hittades.");
         }
 
 
