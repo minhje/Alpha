@@ -11,14 +11,13 @@
             if (modal) {
                 modal.style.display = 'flex';
 
-                // Hämta projekt-ID från data-attribut (endast för Edit-modal)
                 const projectId = button.getAttribute('data-id');
                 if (projectId) {
                     try {
                         const response = await fetch(`/Projects/Edit?id=${projectId}`);
 
             if (response.ok) {
-                const html = await response.text(); // hämta HTML istället
+                const html = await response.text(); 
                 modal.innerHTML = html;
 
     
@@ -26,30 +25,10 @@
                         } else {
                             console.error('Failed to fetch project partial view');
                         }
-
-                        //const response = await fetch(`/Projects/Edit?id=${projectId}`);
-                        //if (response.ok) {
-                        //    const projectData = await response.json();
-
-                        //    // Fyll formuläret med projektdata
-                        //    modal.querySelector('#edit-ProjectName').value = projectData.projectName || '';
-                        //    modal.querySelector('#edit-Description').value = projectData.description || '';
-                        //    modal.querySelector('#edit-StartDate').value = projectData.startDate || '';
-                        //    modal.querySelector('#edit-EndDate').value = projectData.endDate || '';
-                        //    modal.querySelector('#edit-Budget').value = projectData.budget || '';
-                        //    modal.querySelector('#edit-SelectedClientId').value = projectData.selectedClientId || '';
-
-                        //    //modal.querySelector('#edit-SelectedClientIds').value = projectData.selectedClientIds || '';
-                        //} else {
-                        //    console.error('Failed to fetch project data');
-                        //}
                     } catch (error) {
                         console.error('Error fetching project data:', error);
                     }
                 }
-
-                // Initiera klient-sökning och WYSIWYG-redigering
-                //initClientSearch(modal);
                 initWysiwygEditor(modal);
             }
         });
@@ -82,28 +61,6 @@
             }
         });
     });
-
-    //function initClientSearch(modal) {
-    //    const clientSearchInput = modal.querySelector('.form-tag-input');
-    //    const clientSearchResults = modal.querySelector('.search-results');
-    //    const selectedClientIds = modal.querySelector('[name="SelectedClientIds"]');
-
-    //    if (clientSearchInput && clientSearchResults && selectedClientIds) {
-    //        initTagSelector({
-    //            containerId: clientSearchInput.closest('.form-tag-select').id,
-    //            inputId: clientSearchInput.id,
-    //            resultsId: clientSearchResults.id,
-    //            searchUrl: (query) => `/Clients/SearchClients?term=${encodeURIComponent(query)}`,
-    //            displayProperty: 'clientName',
-    //            tagClass: 'client-tag',
-    //            emptyMessage: 'No clients found.',
-    //            hiddenInputId: selectedClientIds.id,
-    //            preselected: []
-    //        });
-    //    } else {
-    //        console.error("One or more required elements for initTagSelector are missing.");
-    //    }
-    //}
 
     function initWysiwygEditor(modal) {
         const editor = modal.querySelector('.wysiwyg-editor');
