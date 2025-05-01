@@ -133,7 +133,6 @@
             }
         });
     });
-
     function clearErrorMessages(form) {
         form.querySelectorAll('[data-val="true"]').forEach(input => {
             input.classList.remove('input-validation-error');

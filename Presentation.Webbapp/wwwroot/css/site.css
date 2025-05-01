@@ -146,6 +146,7 @@ html, body {
     border-radius: 16px;
     box-shadow: var(--box-shadow);
     padding: 1.2rem 1rem 1.2rem 1.5rem;
+    z-index: 1000;
 }
 
 .dropdown-header {
@@ -1262,7 +1263,7 @@ input[type="checkbox"] {
 .project-list {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;  
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto;
     gap: 1rem;
 
 }
@@ -1277,11 +1278,24 @@ input[type="checkbox"] {
         grid-area: header;
         display: grid;
         grid-template-columns: auto 1fr auto;
-        grid-template-areas: "img heading edit" "img client edit";
-        /*    gap: 0.5rem;*/
+        grid-template-areas: "img info edit";
     }
 
+.projects-card-header .project-info {
+    grid-area: info;
+    align-items: center;
+    justify-content: center;
+}
+
 .projects-card-header h6 {
+    font-weight: bold;
+}
+
+.projects-card-header p {
+    color: var(--text-extra-muted-color);
+    font-size: 15px;
+}
+/*.projects-card-header h6 {
     grid-area: heading;
 }
 
@@ -1289,17 +1303,22 @@ input[type="checkbox"] {
     grid-area: client;
     color: var(--text-extra-muted-color);
     font-size: 15px;
-}
+}*/
 
 .projects-card-header i {
     grid-area: edit;
+    justify-self: end;
 }
 
-.projects-card-header img {
+.projects-card-header .project-img {
     grid-area: img;
     height: 56px;
     width: 56px;
     margin-right: 1rem;
+}
+
+.projects-card-main {
+    grid-area: main;
 }
 
 .projects-card-footer {

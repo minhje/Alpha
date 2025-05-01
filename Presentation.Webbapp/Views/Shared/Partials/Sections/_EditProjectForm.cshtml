@@ -26,7 +26,7 @@
             <div class="form-group">
                 <label asp-for="SelectedClientId">Client</label>
                 <div class="field-group">
-                    <select asp-for="SelectedClientId" asp-items="Model.ClientOptions" id="edit-SelectedClientId">
+                    <select asp-for="SelectedClientId" asp-items="@Model.ClientOptions" id="edit-SelectedClientId">
                         <option value="">Select a client</option>
                     </select>
                     <span asp-validation-for="SelectedClientId"></span>
@@ -93,3 +93,56 @@
 
     </div>
 </div>
+<script>
+    // document.addEventListener('DOMContentLoaded', () => {
+
+    // const projectId = button.getAttribute('data-id');
+    // const response = await fetch(`/Projects/Edit?id=${projectId}`);
+
+    // if (response.ok) {
+    //     const projectData = await response.json();
+
+    //     modal.querySelector('#edit-ProjectName').value = projectData.projectName || '';
+    //     modal.querySelector('#edit-Description').value = projectData.description || '';
+    //     modal.querySelector('#edit-StartDate').value = projectData.startDate || '';
+    //     modal.querySelector('#edit-EndDate').value = projectData.endDate || '';
+    //     modal.querySelector('#edit-Budget').value = projectData.budget || '';
+    //     modal.querySelector('#edit-SelectedClientId').value = projectData.selectedClientId || '';
+    // } else {
+    //     console.error('Failed to fetch project data');
+    // }
+    // )});
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const modalButtons = document.querySelectorAll('[data-modal="true"]');
+        modalButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                const modalTarget = button.getAttribute('data-target');
+                const modal = document.querySelector(modalTarget);
+
+                if (modal) {
+                    modal.style.display = 'flex'; // Visar modal-fönstret
+
+                    const projectId = button.getAttribute('data-id'); // Hämtar projekt-ID
+                    const response = await fetch(`/Projects/Edit?id=${projectId}`); // Hämtar projektdata
+
+                    if (response.ok) {
+                        const projectData = await response.json(); // Fyller i data från servern
+
+                        modal.querySelector('#edit-ProjectName').value = projectData.projectName || '';
+                        modal.querySelector('#edit-Description').value = projectData.description || '';
+                        modal.querySelector('#edit-StartDate').value = projectData.startDate || '';
+                        modal.querySelector('#edit-EndDate').value = projectData.endDate || '';
+                        modal.querySelector('#edit-Budget').value = projectData.budget || '';
+                        modal.querySelector('#edit-SelectedClientId').value = projectData.selectedClientId || '';
+                    } else {
+                        console.error('Failed to fetch project data');
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>

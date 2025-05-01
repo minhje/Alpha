@@ -39,9 +39,14 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
         }
     }
 
-    public virtual async Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(bool orderByDecending = false, Expression<Func<TEntity, object>>? sortBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
+    public virtual async Task<RepositoryResult<IEnumerable<TModel>>> GetAllAsync(
+    bool orderByDecending = false,
+    Expression<Func<TEntity, object>>? sortBy = null,
+    Expression<Func<TEntity, bool>>? where = null,
+    params Expression<Func<TEntity, object>>[] includes)
     {
         IQueryable<TEntity> query = _table;
+
         if (where != null)
             query = query.Where(where);
 
@@ -55,9 +60,10 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
                 : query.OrderBy(sortBy);
 
         var entities = await query.ToListAsync();
-        var result = entities.Select(entity => entity.MapTo<TModel>());
+        var result = entities.Select(entity => MapEntityToModel(entity));
         return new RepositoryResult<IEnumerable<TModel>> { Succeeded = true, StatusCode = 200, Result = result };
     }
+
 
     public virtual async Task<RepositoryResult<IEnumerable<TSelect>>> GetAllAsync<TSelect>(Expression<Func<TEntity, TSelect>> selector, bool orderByDecending = false, Expression<Func<TEntity, object>>? sortBy = null, Expression<Func<TEntity, bool>>? where = null, params Expression<Func<TEntity, object>>[] includes)
     {
@@ -148,5 +154,12 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
     {
         await _context.SaveChangesAsync();
     }
+
+    // Genererat av ChatGTP 4o för att kunna mappa om status korrekt. 
+    protected virtual TModel MapEntityToModel(TEntity entity)
+    {
+        return entity.MapTo<TModel>(); 
+    }
+
 
 }

@@ -1,12 +1,9 @@
 ﻿using Business.Models;
-using Data.Contexts;
 using Data.Entities;
 using Data.Repositories;
 using Domain.Dtos;
-using Domain.Extensions;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services;
 
@@ -17,9 +14,10 @@ public interface IProjectService
     Task<ProjectResult<Project>> GetProjectAsync(string id);
     Task<IEnumerable<SelectListItem>> GetClientSelectListAsync();
 }
-public class ProjectService(IProjectRepository projectRepository, IClientService clientService) : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IClientRepository clientRepository, IClientService clientService) : IProjectService
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
+    private readonly IClientRepository _clientRepository = clientRepository;
     private readonly IClientService _clientService = clientService;
 
     public async Task<ProjectResult> CreateProjectAsync(AddProjectFormData formData)
@@ -58,24 +56,39 @@ public class ProjectService(IProjectRepository projectRepository, IClientService
         return new ProjectResult<IEnumerable<Project>> { Succeeded = true, StatusCode = 200, Result = response.Result };
     }
 
-
     public async Task<ProjectResult<Project>> GetProjectAsync(string id)
-
     {
-        var response = await _projectRepository.GetAsync
-        (
+        var response = await _projectRepository.GetAsync(
             where: p => p.Id == id,
             include => include.User!,
             include => include.Status,
             include => include.Client
         );
 
+        if (response.Succeeded)
+        {
+            var project = response.Result; 
 
+            var projectName = project!.ProjectName;
+            var description = project.Description;
+            var startDate = project.StartDate;
+            var endDate = project.EndDate;
+            var budget = project.Budget;
+            var status = project.Status!.Id;
+            var clientId = project.Client!.Id;
 
-        return response.Succeeded
-            ? new ProjectResult<Project> { Succeeded = true, StatusCode = 200, Result = response.Result }
-            : new ProjectResult<Project> { Succeeded = true, StatusCode = 404, Error = $"Project not found." };
+            return new ProjectResult<Project>
+            { Succeeded = true, StatusCode = 200, Result = project
+            };
+        }
+        else
+        {
+            return new ProjectResult<Project>
+            { Succeeded = false, StatusCode = 404, Error = "Project not found."
+            };
+        }
     }
+
     public async Task<IEnumerable<SelectListItem>> GetClientSelectListAsync()
     {
         var result = await _clientService.GetClientsAsync();
@@ -90,4 +103,5 @@ public class ProjectService(IProjectRepository projectRepository, IClientService
                 Text = client.ClientName
             });
     }
+
 }

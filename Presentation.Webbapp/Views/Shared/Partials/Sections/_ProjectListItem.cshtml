@@ -4,6 +4,51 @@
     <div class="projects-card-header">
         @if (Model.Image != null)
         {
+            <div class="project-img square">
+                <img src="@Model.Image" alt="@Model.Image" />
+            </div>
+        }
+        else
+        {
+            <div class="project-img square">
+                <img src="~/images/Templates/template-blue.svg" alt="Default Image" />
+            </div>
+        }
+
+        <div class="project-info">
+            <h6>@Model.ProjectName</h6>
+            <p>@Model.Client?.ClientName</p>
+        </div>
+
+        <div id="project-dropdown-container" class="dropdown-container">
+            <button type="button" data-type="dropdown" data-target="#project-dropdown-@Model.Id" class="btn-more">
+                <i class="fa-regular fa-ellipsis"></i>
+            </button>
+
+            <div id="project-dropdown-@Model.Id" class="project-dropdown hide">
+                <div class="dropdown-edit" data-modal="true" data-target="#editProjectModal">
+                    <i class="fa-duotone fa-solid fa-pen-line"></i>
+                    <span>Edit</span>
+                </div>
+                <div class="divider"></div>
+                <div class="dropdown-delete">
+                    <i class="fa-duotone fa-solid fa-trash-can"></i>
+                    <span>Delete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="projects-card-main">
+        <div>@Html.Raw(Model.Description)</div>
+    </div>
+</div>
+
+
+@* <div class="surface projects-card">
+    <div class="projects-card-header">
+        @if (Model.Image != null)
+        {
             <div class="avatar">
                 <img src="@Model.Image" alt="@Model.Image" />
             </div>
@@ -15,9 +60,8 @@
             </div>
         }
 
-
         <h6>@Model.ProjectName</h6>
-        <p>@Model.Client</p>
+        <p>@Model.Client?.ClientName</p>
 
         <div id="project-dropdown-container" class="dropdown-container">
             <button type="button" data-type="dropdown" data-target="#project-dropdown-@Model.Id" class="btn-more">
@@ -42,11 +86,11 @@
         <div>@Html.Raw(Model.Description)</div>
     </div>
 
-    @* <div class="projects-card-footer">
+    <div class="projects-card-footer">
         <div class="countdown"><i class="fa-duotone fa-solid fa-clock"></i> 1 week left</div>
         <div class="members">
             <img src=@Model.User class="circle"/>
         </div>
-    </div> *@
-</div>
+    </div> 
+</div> *@
 
