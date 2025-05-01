@@ -20,7 +20,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .HasOne(p => p.Status)
             .WithMany(s => s.Projects)
             .HasForeignKey(p => p.StatusId)
-            .OnDelete(DeleteBehavior.Restrict); // Eller annan DeleteBehavior
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
 

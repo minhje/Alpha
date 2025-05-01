@@ -5,7 +5,6 @@ using Data.Contexts;
 using Data.Models;
 using Domain.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Data.Entities;
 
 namespace Data.Repositories;
 

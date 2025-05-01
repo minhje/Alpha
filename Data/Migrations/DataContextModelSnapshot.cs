@@ -78,6 +78,8 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientEntityId");
+
                     b.HasIndex("ClientId");
 
                     b.HasIndex("StatusId");
@@ -363,16 +365,20 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
-                    b.HasOne("Data.Entities.ClientEntity", "Client")
+                    b.HasOne("Data.Entities.ClientEntity", null)
                         .WithMany("Projects")
+                        .HasForeignKey("ClientEntityId");
+
+                    b.HasOne("Data.Entities.ClientEntity", "Client")
+                        .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Data.Entities.StatusEntity", "Status")
                         .WithMany("Projects")
                         .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Data.Entities.UserEntity", "User")

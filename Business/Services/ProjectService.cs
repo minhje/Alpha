@@ -13,6 +13,7 @@ public interface IProjectService
     Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync();
     Task<ProjectResult<Project>> GetProjectAsync(string id);
     Task<IEnumerable<SelectListItem>> GetClientSelectListAsync();
+    Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id);
 }
 public class ProjectService(IProjectRepository projectRepository, IClientRepository clientRepository, IClientService clientService) : IProjectService
 {
@@ -67,15 +68,15 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
 
         if (response.Succeeded)
         {
-            var project = response.Result; 
+            var project = response.Result;
 
             var projectName = project!.ProjectName;
             var description = project.Description;
             var startDate = project.StartDate;
             var endDate = project.EndDate;
             var budget = project.Budget;
-            var status = project.Status!.Id;
-            var clientId = project.Client!.Id;
+            var status = project.Status?.Id;
+            var clientId = project.Client?.Id;
 
             return new ProjectResult<Project>
             { Succeeded = true, StatusCode = 200, Result = project
@@ -87,6 +88,40 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
             { Succeeded = false, StatusCode = 404, Error = "Project not found."
             };
         }
+    }
+
+    public async Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id)
+    {
+        var projectResult = await _projectRepository.GetAsync(
+            where: p => p.Id == id,
+            include => include.Client
+        );
+
+        if (!projectResult.Succeeded || projectResult.Result == null)
+            return new ProjectResult<EditProjectFormData> { Succeeded = false, StatusCode = 404, Error = "Project not found." };
+
+        var project = projectResult.Result;
+
+        var clientOptions = (await GetClientSelectListAsync()).ToList();
+
+        var formData = new EditProjectFormData
+        {
+            Id = project.Id,
+            ProjectName = project.ProjectName,
+            Description = project.Description,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
+            Budget = project.Budget,
+            SelectedClientId = project.Client.Id,
+            ClientOptions = clientOptions
+        };
+
+        return new ProjectResult<EditProjectFormData>
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = formData
+        };
     }
 
     public async Task<IEnumerable<SelectListItem>> GetClientSelectListAsync()

@@ -9,6 +9,8 @@
         </div>
 
         <form asp-action="Edit" asp-controller="Projects" method="post" novalidate data-form="edit">
+            <input type="hidden" asp-for="Id" id="edit-Id" />
+
 
             <div class="image-previewer">
                 <img src="" class="image-preview" />
@@ -65,7 +67,7 @@
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
                     <div class="field-group">
-                        <input asp-for="StartDate" id="edit-StartDate" />
+                        <input asp-for="StartDate" id="edit-StartDate" type="date" />
                         <span asp-validation-for="StartDate"></span>
                     </div>
                 </div>
@@ -73,7 +75,7 @@
                 <div class="form-group">
                     <label asp-for="EndDate"></label>
                     <div class="field-group">
-                        <input asp-for="EndDate" id="edit-EndDate" />
+                        <input asp-for="EndDate" id="edit-EndDate" type="date" />
                         <span asp-validation-for="EndDate"></span>
                     </div>
                 </div>
@@ -93,56 +95,53 @@
 
     </div>
 </div>
+
+
+
 <script>
-    // document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+    const modalButtons = document.querySelectorAll('[data-modal="true"]');
+    modalButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const modalTarget = button.getAttribute('data-target');
+            const modal = document.querySelector(modalTarget);
 
-    // const projectId = button.getAttribute('data-id');
-    // const response = await fetch(`/Projects/Edit?id=${projectId}`);
+            if (modal) {
+                modal.style.display = 'flex'; // Visar modal-fönstret
 
-    // if (response.ok) {
-    //     const projectData = await response.json();
+                const projectId = button.getAttribute('data-id'); // Hämtar projekt-ID
+                const response = await fetch(`/Projects/Edit?id=${projectId}`); // Hämtar projektdata
 
-    //     modal.querySelector('#edit-ProjectName').value = projectData.projectName || '';
-    //     modal.querySelector('#edit-Description').value = projectData.description || '';
-    //     modal.querySelector('#edit-StartDate').value = projectData.startDate || '';
-    //     modal.querySelector('#edit-EndDate').value = projectData.endDate || '';
-    //     modal.querySelector('#edit-Budget').value = projectData.budget || '';
-    //     modal.querySelector('#edit-SelectedClientId').value = projectData.selectedClientId || '';
-    // } else {
-    //     console.error('Failed to fetch project data');
-    // }
-    // )});
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-        const modalButtons = document.querySelectorAll('[data-modal="true"]');
-        modalButtons.forEach(button => {
-            button.addEventListener('click', async () => {
-                const modalTarget = button.getAttribute('data-target');
-                const modal = document.querySelector(modalTarget);
-
-                if (modal) {
-                    modal.style.display = 'flex'; // Visar modal-fönstret
-
-                    const projectId = button.getAttribute('data-id'); // Hämtar projekt-ID
-                    const response = await fetch(`/Projects/Edit?id=${projectId}`); // Hämtar projektdata
-
-                    if (response.ok) {
-                        const projectData = await response.json(); // Fyller i data från servern
-
+                if (response.ok) {
+                    const projectData = await response.json(); // Fyller i data från servern
+                        modal.querySelector('#edit-Id').value = projectData.id || '';
                         modal.querySelector('#edit-ProjectName').value = projectData.projectName || '';
                         modal.querySelector('#edit-Description').value = projectData.description || '';
-                        modal.querySelector('#edit-StartDate').value = projectData.startDate || '';
-                        modal.querySelector('#edit-EndDate').value = projectData.endDate || '';
+                        modal.querySelector('#edit-StartDate').value = formatDate(projectData.startDate);
+                        modal.querySelector('#edit-EndDate').value = formatDate(projectData.endDate);
                         modal.querySelector('#edit-Budget').value = projectData.budget || '';
-                        modal.querySelector('#edit-SelectedClientId').value = projectData.selectedClientId || '';
-                    } else {
-                        console.error('Failed to fetch project data');
-                    }
+
+                        // Klient-dropdown
+                        const clientSelect = modal.querySelector('#edit-SelectedClientId');
+                        clientSelect.innerHTML = '<option value="">Select a client</option>';
+                        projectData.clientOptions.forEach(opt => {
+                            const option = document.createElement('option');
+                            option.value = opt.value;
+                            option.text = opt.text;
+                            option.selected = opt.value === projectData.selectedClientId;
+                            clientSelect.appendChild(option);
+                        });
+
+                } else {
+                    console.error('Failed to fetch project data');
                 }
-            });
+            }
         });
     });
+});
 
+    function formatDate(dateString) {
+        return dateString ? dateString.split("T")[0] : "";
+    }
 
 </script>

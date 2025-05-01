@@ -68,42 +68,36 @@ public class ProjectsController(IProjectService projectService) : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
-        var projectServiceResult = await _projectService.GetProjectAsync(id);
-        var project = projectServiceResult.Result;
-        if (project == null)
-        {
+        var result = await _projectService.GetEditFormDataAsync(id);
+        if (!result.Succeeded || result.Result == null)
             return NotFound();
-        }
-        var editModel = new EditProjectViewModel
-        {
-            Id = project.Id,
-            ProjectName = project.ProjectName,
-            Description = project.Description,
-            StartDate = project.StartDate,
-            EndDate = project.EndDate,
-            Budget = project.Budget,
-            ClientOptions = await _projectService.GetClientSelectListAsync(),
-            SelectedClientId = project.Client?.Id
-        };
-        return View(editModel);
+
+        return Json(result.Result); 
     }
 
-    //[HttpPost]
-    //public async Task<IActionResult> Edit(EditProjectFormData formData)
+    //[HttpGet]
+    //public async Task<IActionResult> Edit(string id)
     //{
-    //    if (!ModelState.IsValid)
+    //    var projectServiceResult = await _projectService.GetProjectAsync(id);
+    //    var project = projectServiceResult.Result;
+    //    if (project == null)
     //    {
-    //        var errors = ModelState.Where(x => x.Value?.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value?.Errors.Select(x => x.ErrorMessage).ToArray());
-    //        return BadRequest(new { success = false, errors });
+    //        return NotFound();
     //    }
-    //    //var result = await _projectService.EditProjectAsync(formData);
-    //    if (result.Succeeded)
+    //    var editModel = new EditProjectViewModel
     //    {
-    //        return Ok();
-    //    }
-    //    return Conflict();
-
+    //        Id = project.Id,
+    //        ProjectName = project.ProjectName,
+    //        Description = project.Description,
+    //        StartDate = project.StartDate,
+    //        EndDate = project.EndDate,
+    //        Budget = project.Budget,
+    //        ClientOptions = await _projectService.GetClientSelectListAsync(),
+    //        SelectedClientId = project.Client?.Id
+    //    };
+    //    return View(editModel);
     //}
+
 
     [HttpPost]
     public IActionResult Delete(string id)

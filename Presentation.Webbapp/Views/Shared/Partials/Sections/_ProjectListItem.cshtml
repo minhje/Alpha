@@ -26,10 +26,11 @@
             </button>
 
             <div id="project-dropdown-@Model.Id" class="project-dropdown hide">
-                <div class="dropdown-edit" data-modal="true" data-target="#editProjectModal">
+                <div class="dropdown-edit" data-modal="true" data-target="#editProjectModal" data-id="@Model.Id">
                     <i class="fa-duotone fa-solid fa-pen-line"></i>
                     <span>Edit</span>
                 </div>
+
                 <div class="divider"></div>
                 <div class="dropdown-delete">
                     <i class="fa-duotone fa-solid fa-trash-can"></i>

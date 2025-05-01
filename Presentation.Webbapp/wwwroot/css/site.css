@@ -992,6 +992,10 @@ form {
         border-color: var(--red-dark);
     }
 
+form .form-control {
+    border-radius: 14px;
+}
+
 .form-footer {
     margin-top: 3rem;
     text-align: center;
@@ -1262,11 +1266,11 @@ input[type="checkbox"] {
 
 .project-list {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;  
+    grid-template-columns: 1fr 1fr 1fr;  
     grid-template-rows: auto;
     gap: 1rem;
-
 }
+
 .projects-card {
     height: 270px;
     width: 350px;
@@ -1295,15 +1299,6 @@ input[type="checkbox"] {
     color: var(--text-extra-muted-color);
     font-size: 15px;
 }
-/*.projects-card-header h6 {
-    grid-area: heading;
-}
-
-.projects-card-header p {
-    grid-area: client;
-    color: var(--text-extra-muted-color);
-    font-size: 15px;
-}*/
 
 .projects-card-header i {
     grid-area: edit;
