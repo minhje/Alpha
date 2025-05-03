@@ -10,6 +10,7 @@ namespace Data.Repositories
 {
     public interface IProjectRepository : IBaseRepository<ProjectEntity, Project>
     {
+        ProjectEntity MapModelToEntity(Project model);
     }
 
     public class ProjectRepository(DataContext context) : BaseRepository<ProjectEntity, Project>(context), IProjectRepository
@@ -48,7 +49,7 @@ namespace Data.Repositories
         {
             return new Project
             {
-                Id = entity.Id.ToString(),
+                Id = entity.Id,
                 ProjectName = entity.ProjectName,
                 Description = entity.Description,
                 StartDate = entity.StartDate,
@@ -58,7 +59,7 @@ namespace Data.Repositories
                 Client = entity.Client != null
                     ? new Client
                     {
-                        Id = entity.Client.Id.ToString(),
+                        Id = entity.Client.Id,
                         ClientName = entity.Client.ClientName,
                     }
                     : null,
@@ -71,15 +72,30 @@ namespace Data.Repositories
                     }
                     : null,
 
-                User = entity.User != null
-                    ? new User
-                    {
-                        Id = entity.User.Id.ToString(),
-                        FirstName = entity.User.FirstName,
-                        LastName = entity.User.LastName,
-                        Email = entity.User.Email!
-                    }
-                    : null
+                //User = entity.User != null
+                //    ? new User
+                //    {
+                //        Id = entity.User.Id,
+                //        FirstName = entity.User.FirstName,
+                //        LastName = entity.User.LastName,
+                //        Email = entity.User.Email!
+                //    }
+                //    : null
+            };
+        }
+        public ProjectEntity MapModelToEntity(Project model)
+        {
+            return new ProjectEntity
+            {
+                Id = model.Id,
+                ProjectName = model.ProjectName,
+                Description = model.Description,
+                StartDate = model.StartDate,
+                EndDate = model.EndDate,
+                Budget = model.Budget,
+                ClientId = model.Client?.Id!,
+                StatusId = model.Status?.Id ?? 1
+               
             };
         }
     }

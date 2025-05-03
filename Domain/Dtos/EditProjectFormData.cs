@@ -44,4 +44,5 @@ public class EditProjectFormData
 
     [Display(Name = "Status", Prompt = "Select project status")]
     public Status? Status { get; set; }
+    public IEnumerable<SelectListItem> StatusOptions { get; set; } = [];
 }

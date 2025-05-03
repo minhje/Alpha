@@ -4,6 +4,7 @@ using Data.Repositories;
 using Domain.Dtos;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq.Expressions;
 
 namespace Business.Services;
 
@@ -14,6 +15,7 @@ public interface IProjectService
     Task<ProjectResult<Project>> GetProjectAsync(string id);
     Task<IEnumerable<SelectListItem>> GetClientSelectListAsync();
     Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id);
+    Task<ProjectResult<bool>> UpdateProjectAsync(EditProjectFormData formData);
 }
 public class ProjectService(IProjectRepository projectRepository, IClientRepository clientRepository, IClientService clientService) : IProjectService
 {
@@ -90,11 +92,45 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
         }
     }
 
+    //public async Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id)
+    //{
+    //    var projectResult = await _projectRepository.GetAsync(
+    //        where: p => p.Id == id,
+    //        include => include.Client,
+    //        include => include.Status
+    //    );
+
+    //    if (!projectResult.Succeeded || projectResult.Result == null)
+    //        return new ProjectResult<EditProjectFormData> { Succeeded = false, StatusCode = 404, Error = "Project not found." };
+
+    //    var project = projectResult.Result;
+
+    //    var clientOptions = (await GetClientSelectListAsync()).ToList();
+
+    //    var formData = new EditProjectFormData
+    //    {
+    //        Id = project.Id,
+    //        ProjectName = project.ProjectName,
+    //        Description = project.Description,
+    //        StartDate = project.StartDate,
+    //        EndDate = project.EndDate,
+    //        Budget = project.Budget,
+    //        SelectedClientId = project.Client.Id,
+    //        ClientOptions = clientOptions,
+    //        Status = project.Status
+    //    };
+
+    //    return new ProjectResult<EditProjectFormData>
+    //    { Succeeded = true, StatusCode = 200, Result = formData };
+    //}
     public async Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id)
     {
         var projectResult = await _projectRepository.GetAsync(
             where: p => p.Id == id,
-            include => include.Client
+            [
+            include => include.Client,
+            include => include.Status
+            ]
         );
 
         if (!projectResult.Succeeded || projectResult.Result == null)
@@ -102,7 +138,7 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
 
         var project = projectResult.Result;
 
-        var clientOptions = (await GetClientSelectListAsync()).ToList();
+        var clientOptions = await GetClientSelectListAsync();
 
         var formData = new EditProjectFormData
         {
@@ -112,17 +148,57 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
             StartDate = project.StartDate,
             EndDate = project.EndDate,
             Budget = project.Budget,
-            SelectedClientId = project.Client.Id,
-            ClientOptions = clientOptions
+            SelectedClientId = project.Client?.Id ?? "",
+            ClientOptions = clientOptions,
+            Status = project.Status // Om du vill mappa in detta också
         };
 
         return new ProjectResult<EditProjectFormData>
+        { Succeeded = true, StatusCode = 200, Result = formData };
+    }
+
+    public async Task<ProjectResult<bool>> UpdateProjectAsync(Project model)
+    {
+        var entity = _projectRepository.MapModelToEntity(model);
+        var result = await _projectRepository.UpdateAsync(entity);
+
+        return new ProjectResult<bool>
         {
-            Succeeded = true,
-            StatusCode = 200,
-            Result = formData
+            Succeeded = result.Succeeded,
+            StatusCode = result.StatusCode,
+            Error = result.Error
         };
     }
+    public async Task<ProjectResult<bool>> UpdateProjectAsync(EditProjectFormData formData)
+    {
+        var project = new Project
+        {
+            Id = formData.Id,
+            ProjectName = formData.ProjectName,
+            Description = formData.Description,
+            StartDate = formData.StartDate,
+            EndDate = formData.EndDate,
+            Budget = formData.Budget,
+            Client = new Client
+            {
+                Id = formData.SelectedClientId!
+            },
+            Status = formData.Status,
+            User = formData.Member
+        };
+
+        var entity = _projectRepository.MapModelToEntity(project);
+
+        var result = await _projectRepository.UpdateAsync(entity);
+
+        return new ProjectResult<bool>
+        {
+            Succeeded = result.Succeeded,
+            StatusCode = result.StatusCode,
+            Error = result.Error
+        };
+    }
+
 
     public async Task<IEnumerable<SelectListItem>> GetClientSelectListAsync()
     {

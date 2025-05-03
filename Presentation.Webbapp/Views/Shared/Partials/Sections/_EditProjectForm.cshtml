@@ -9,7 +9,7 @@
         </div>
 
         <form asp-action="Edit" asp-controller="Projects" method="post" novalidate data-form="edit">
-            <input type="hidden" asp-for="Id" id="edit-Id" />
+            <input type="hidden" name="Id" id="edit-Id" />
 
 
             <div class="image-previewer">
@@ -90,14 +90,18 @@
                 </div>
             </div>
 
+            <div class="form-group">
+            <select asp-for="Status" asp-items="Model.StatusOptions" class="form-control">
+                <option value="">Select a status</option>
+            </select>
+            </div>
+
             <button type="submit" class="btn btn-submit btn-blue">Save</button>
         </form>
 
     </div>
 </div>
-
-
-
+@* 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
     const modalButtons = document.querySelectorAll('[data-modal="true"]');
@@ -144,4 +148,4 @@
         return dateString ? dateString.split("T")[0] : "";
     }
 
-</script>
+</script> *@

@@ -1,5 +1,4 @@
-﻿using Domain.Models;
-using System.Reflection;
+﻿using System.Reflection;
 namespace Domain.Extensions;
 
 public static class MappingExtensions

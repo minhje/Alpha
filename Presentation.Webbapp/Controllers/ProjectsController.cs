@@ -1,15 +1,17 @@
 ﻿using Business.Services;
 using Domain.Dtos;
-using Domain.Models;
+using Domain.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Presentation.WebApp.ViewModels;
 using Presentation.WebApp.ViewModels.Add;
 
 namespace Presentation.WebApp.Controllers;
 
-public class ProjectsController(IProjectService projectService) : Controller
+public class ProjectsController(IProjectService projectService, IStatusService statusService) : Controller
 {
     private readonly IProjectService _projectService = projectService;
+    private readonly IStatusService _statusService = statusService;
 
     [Route("projects")]
     public async Task<IActionResult> Index(int? statusId, AddProjectViewModel model, EditProjectViewModel editModel)
@@ -19,8 +21,6 @@ public class ProjectsController(IProjectService projectService) : Controller
 
         ViewBag.Description = model.Description;
 
-
-        // Filtrera projekten baserat på statusId
         var filteredProjects = statusId.HasValue
             ? allProjects.Where(p => p.Status?.Id == statusId.Value).ToList()
             : allProjects;
@@ -34,7 +34,8 @@ public class ProjectsController(IProjectService projectService) : Controller
 
             EditProjectFormData = new EditProjectFormData
             { 
-                ClientOptions = await _projectService.GetClientSelectListAsync() 
+                ClientOptions = await _projectService.GetClientSelectListAsync(),
+                StatusOptions = await _statusService.GetStatusSelectListAsync()
             },
             
             Projects = filteredProjects,
@@ -69,34 +70,45 @@ public class ProjectsController(IProjectService projectService) : Controller
     public async Task<IActionResult> Edit(string id)
     {
         var result = await _projectService.GetEditFormDataAsync(id);
-        if (!result.Succeeded || result.Result == null)
-            return NotFound();
 
-        return Json(result.Result); 
+        if (!result.Succeeded)
+        {
+            return NotFound(new { success = false, message = result.Error });
+        }
+
+        return Json(new { success = true, data = result.Result });
     }
 
-    //[HttpGet]
-    //public async Task<IActionResult> Edit(string id)
-    //{
-    //    var projectServiceResult = await _projectService.GetProjectAsync(id);
-    //    var project = projectServiceResult.Result;
-    //    if (project == null)
-    //    {
-    //        return NotFound();
-    //    }
-    //    var editModel = new EditProjectViewModel
-    //    {
-    //        Id = project.Id,
-    //        ProjectName = project.ProjectName,
-    //        Description = project.Description,
-    //        StartDate = project.StartDate,
-    //        EndDate = project.EndDate,
-    //        Budget = project.Budget,
-    //        ClientOptions = await _projectService.GetClientSelectListAsync(),
-    //        SelectedClientId = project.Client?.Id
-    //    };
-    //    return View(editModel);
-    //}
+    [HttpPost]
+    public async Task<IActionResult> Edit(EditProjectFormData formData)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(x => x.Key, x => x.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
+            return BadRequest(new { success = false, errors });
+        }
+
+        var result = await _projectService.UpdateProjectAsync(formData);
+        var statusResult = await _statusService.GetStatusesAsync();
+
+        if (statusResult.Succeeded && statusResult.Result != null)
+        {
+            formData.StatusOptions = statusResult.Result.Select(status => new SelectListItem
+            {
+                Value = status.Id.ToString(),
+                Text = status.StatusName
+            });
+        }
+
+        if (result.Succeeded)
+        {
+            return Ok(new { success = true });
+        }
+
+        return Conflict(new { success = false, message = result.Error });
+    }
+
 
 
     [HttpPost]

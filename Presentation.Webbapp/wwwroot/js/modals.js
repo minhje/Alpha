@@ -1,7 +1,40 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
-    const previewSize = 150;
+﻿//document.addEventListener('DOMContentLoaded', () => {
+//    const previewSize = 150;
 
-    // Open modal
+//    // Open modal
+//    const modalButtons = document.querySelectorAll('[data-modal="true"]');
+//    modalButtons.forEach(button => {
+//        button.addEventListener('click', async () => {
+//            const modalTarget = button.getAttribute('data-target');
+//            const modal = document.querySelector(modalTarget);
+
+//            if (modal) {
+//                modal.style.display = 'flex';
+
+//                const projectId = button.getAttribute('data-id');
+//                if (projectId) {
+//                    try {
+//                        const response = await fetch(`/Projects/Edit?id=${projectId}`);
+
+//                        if (response.ok) {
+//                            const html = await response.text();
+//                            modal.innerHTML = html;
+
+
+//                            initWysiwygEditor(modal);
+//                        } else {
+//                            console.error('Failed to fetch project partial view');
+//                        }
+//                    } catch (error) {
+//                        console.error('Error fetching project data:', error);
+//                    }
+//                }
+//                initWysiwygEditor(modal);
+//            }
+//        });
+//    });
+
+document.addEventListener('DOMContentLoaded', () => {
     const modalButtons = document.querySelectorAll('[data-modal="true"]');
     modalButtons.forEach(button => {
         button.addEventListener('click', async () => {
@@ -15,24 +48,49 @@
                 if (projectId) {
                     try {
                         const response = await fetch(`/Projects/Edit?id=${projectId}`);
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                const data = result.data;
+                                initWysiwygEditor(modal);
 
-            if (response.ok) {
-                const html = await response.text(); 
-                modal.innerHTML = html;
+                                // Fyll i modalens fält
+                                modal.querySelector('#edit-Id').value = data.id || '';
+                                modal.querySelector('#edit-ProjectName').value = data.projectName || '';
+                                modal.querySelector('#edit-Description').value = data.description || '';
+                                modal.querySelector('#edit-StartDate').value = formatDate(data.startDate);
+                                modal.querySelector('#edit-EndDate').value = formatDate(data.endDate);
+                                modal.querySelector('#edit-Budget').value = data.budget || '';
 
-    
-                            initWysiwygEditor(modal);
+                                // Fyll i klient-dropdown
+                                const clientSelect = modal.querySelector('#edit-SelectedClientId');
+                                clientSelect.innerHTML = '<option value="">Select a client</option>';
+                                data.clientOptions.forEach(opt => {
+                                    const option = document.createElement('option');
+                                    option.value = opt.value;
+                                    option.text = opt.text;
+                                    option.selected = opt.value === data.selectedClientId;
+                                    clientSelect.appendChild(option);
+                                });
+                            } else {
+                                console.error('Failed to load project data:', result.message);
+                            }
                         } else {
-                            console.error('Failed to fetch project partial view');
+                            console.error('Failed to fetch project data');
                         }
                     } catch (error) {
                         console.error('Error fetching project data:', error);
                     }
                 }
-                initWysiwygEditor(modal);
             }
         });
     });
+
+    function formatDate(dateString) {
+        return dateString ? dateString.split("T")[0] : "";
+    }
+});
+
 
     // Close modal
     const closeButtons = document.querySelectorAll('[data-close="true"]');
@@ -189,5 +247,3 @@
             console.error('Failed on image-processing: ', error);
         }
     }
-
-});
