@@ -34,6 +34,63 @@
 //        });
 //    });
 
+//document.addEventListener('DOMContentLoaded', () => {
+//    const modalButtons = document.querySelectorAll('[data-modal="true"]');
+//    modalButtons.forEach(button => {
+//        button.addEventListener('click', async () => {
+//            const modalTarget = button.getAttribute('data-target');
+//            const modal = document.querySelector(modalTarget);
+
+//            if (modal) {
+//                modal.style.display = 'flex';
+
+//                const projectId = button.getAttribute('data-id');
+//                if (projectId) {
+//                    try {
+//                        const response = await fetch(`/Projects/Edit?id=${projectId}`);
+//                        if (response.ok) {
+//                            const result = await response.json();
+//                            if (result.success) {
+//                                const data = result.data;
+//                                initWysiwygEditor(modal);
+
+//                                // Fyll i modalens fält
+//                                modal.querySelector('#edit-Id').value = data.id || '';
+//                                modal.querySelector('#edit-ProjectName').value = data.projectName || '';
+//                                modal.querySelector('#edit-Description').value = data.description || '';
+//                                modal.querySelector('#edit-StartDate').value = formatDate(data.startDate);
+//                                modal.querySelector('#edit-EndDate').value = formatDate(data.endDate);
+//                                modal.querySelector('#edit-Budget').value = data.budget || '';
+
+//                                // Fyll i klient-dropdown
+//                                const clientSelect = modal.querySelector('#edit-SelectedClientId');
+//                                clientSelect.innerHTML = '<option value="">Select a client</option>';
+//                                data.clientOptions.forEach(opt => {
+//                                    const option = document.createElement('option');
+//                                    option.value = opt.value;
+//                                    option.text = opt.text;
+//                                    option.selected = opt.value === data.selectedClientId;
+//                                    clientSelect.appendChild(option);
+//                                });
+//                            } else {
+//                                console.error('Failed to load project data:', result.message);
+//                            }
+//                        } else {
+//                            console.error('Failed to fetch project data');
+//                        }
+//                    } catch (error) {
+//                        console.error('Error fetching project data:', error);
+//                    }
+//                }
+//            }
+//        });
+//    });
+
+//    function formatDate(dateString) {
+//        return dateString ? dateString.split("T")[0] : "";
+//    }
+//});
+
 document.addEventListener('DOMContentLoaded', () => {
     const modalButtons = document.querySelectorAll('[data-modal="true"]');
     modalButtons.forEach(button => {
@@ -44,52 +101,49 @@ document.addEventListener('DOMContentLoaded', () => {
             if (modal) {
                 modal.style.display = 'flex';
 
-                const projectId = button.getAttribute('data-id');
-                if (projectId) {
-                    try {
-                        const response = await fetch(`/Projects/Edit?id=${projectId}`);
-                        if (response.ok) {
-                            const result = await response.json();
-                            if (result.success) {
-                                const data = result.data;
-                                initWysiwygEditor(modal);
+                if (modalTarget === '#editProjectModal') {
+                    // Ladda data för Edit-modal
+                    const projectId = button.getAttribute('data-id');
+                    if (projectId) {
+                        try {
+                            const response = await fetch(`/Projects/Edit?id=${projectId}`);
+                            if (response.ok) {
+                                const result = await response.json();
+                                if (result.success) {
+                                    const data = result.data;
+                                    modal.querySelector('#edit-Id').value = data.id || '';
+                                    modal.querySelector('#edit-ProjectName').value = data.projectName || '';
+                                    modal.querySelector('#edit-Description').value = data.description || '';
+                                    modal.querySelector('#edit-StartDate').value = formatDate(data.startDate);
+                                    modal.querySelector('#edit-EndDate').value = formatDate(data.endDate);
+                                    modal.querySelector('#edit-Budget').value = data.budget || '';
 
-                                // Fyll i modalens fält
-                                modal.querySelector('#edit-Id').value = data.id || '';
-                                modal.querySelector('#edit-ProjectName').value = data.projectName || '';
-                                modal.querySelector('#edit-Description').value = data.description || '';
-                                modal.querySelector('#edit-StartDate').value = formatDate(data.startDate);
-                                modal.querySelector('#edit-EndDate').value = formatDate(data.endDate);
-                                modal.querySelector('#edit-Budget').value = data.budget || '';
-
-                                // Fyll i klient-dropdown
-                                const clientSelect = modal.querySelector('#edit-SelectedClientId');
-                                clientSelect.innerHTML = '<option value="">Select a client</option>';
-                                data.clientOptions.forEach(opt => {
-                                    const option = document.createElement('option');
-                                    option.value = opt.value;
-                                    option.text = opt.text;
-                                    option.selected = opt.value === data.selectedClientId;
-                                    clientSelect.appendChild(option);
-                                });
-                            } else {
-                                console.error('Failed to load project data:', result.message);
+                                    const clientSelect = modal.querySelector('#edit-SelectedClientId');
+                                    clientSelect.innerHTML = '<option value="">Select a client</option>';
+                                    data.clientOptions.forEach(opt => {
+                                        const option = document.createElement('option');
+                                        option.value = opt.value;
+                                        option.text = opt.text;
+                                        option.selected = opt.value === data.selectedClientId;
+                                        clientSelect.appendChild(option);
+                                    });
+                                }
                             }
-                        } else {
-                            console.error('Failed to fetch project data');
+                        } catch (error) {
+                            console.error('Error fetching project data:', error);
                         }
-                    } catch (error) {
-                        console.error('Error fetching project data:', error);
                     }
                 }
+
+                initWysiwygEditor(modal); // Initiera Quill för rätt modal
             }
         });
     });
-
     function formatDate(dateString) {
         return dateString ? dateString.split("T")[0] : "";
     }
 });
+
 
 
     // Close modal
@@ -120,26 +174,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function initWysiwygEditor(modal) {
-        const editor = modal.querySelector('.wysiwyg-editor');
-        const toolbar = modal.querySelector('.wysiwyg-toolbar');
-        const textarea = modal.querySelector('textarea');
+function initWysiwygEditor(modal) {
+    console.log("Initializing Quill editor for modal:", modal.id);
+    const editor = modal.querySelector('.wysiwyg-editor');
+    const toolbar = modal.querySelector('.wysiwyg-toolbar');
+    const textarea = modal.querySelector('textarea');
 
-        if (editor && toolbar && textarea) {
-            const quill = new Quill(editor, {
-                modules: {
-                    syntax: true,
-                    toolbar: '#' + toolbar.id
-                },
-                placeholder: 'Enter a description',
-                theme: "snow"
-            });
+    if (editor && toolbar && textarea) {
+        const quill = new Quill(editor, {
+            modules: {
+                syntax: true,
+                toolbar: '#' + toolbar.id
+            },
+            placeholder: 'Enter a description',
+            theme: "snow"
+        });
 
-            quill.on('text-change', () => {
-                textarea.value = quill.root.innerHTML;
-            });
-        }
+        quill.on('text-change', () => {
+            textarea.value = quill.root.innerHTML;
+        });
+    } else {
+        console.error("Quill editor elements not found in modal:", modal.id);
     }
+}
+
+
+//function initWysiwygEditor(modal) {
+//        const editor = modal.querySelector('.wysiwyg-editor');
+//        const toolbar = modal.querySelector('.wysiwyg-toolbar');
+//        const textarea = modal.querySelector('textarea');
+
+//        if (editor && toolbar && textarea) {
+//            const quill = new Quill(editor, {
+//                modules: {
+//                    syntax: true,
+//                    toolbar: '#' + toolbar.id
+//                },
+//                placeholder: 'Enter a description',
+//                theme: "snow"
+//            });
+
+//            quill.on('text-change', () => {
+//                textarea.value = quill.root.innerHTML;
+//            });
+//        }
+//    }
 
     // Handle image previewer
     document.querySelectorAll('.image-previewer').forEach(previewer => {

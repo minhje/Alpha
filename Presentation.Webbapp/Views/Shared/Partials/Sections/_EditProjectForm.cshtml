@@ -91,9 +91,12 @@
             </div>
 
             <div class="form-group">
-            <select asp-for="Status" asp-items="Model.StatusOptions" class="form-control">
-                <option value="">Select a status</option>
-            </select>
+                <label asp-for="Status"></label>
+                <div class="field-group">
+                    <select asp-for="Status" asp-items="Model.StatusOptions" class="form-control">
+                        <option value="">Select a status</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-submit btn-blue">Save</button>
@@ -101,51 +104,3 @@
 
     </div>
 </div>
-@* 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const modalButtons = document.querySelectorAll('[data-modal="true"]');
-    modalButtons.forEach(button => {
-        button.addEventListener('click', async () => {
-            const modalTarget = button.getAttribute('data-target');
-            const modal = document.querySelector(modalTarget);
-
-            if (modal) {
-                modal.style.display = 'flex'; // Visar modal-fönstret
-
-                const projectId = button.getAttribute('data-id'); // Hämtar projekt-ID
-                const response = await fetch(`/Projects/Edit?id=${projectId}`); // Hämtar projektdata
-
-                if (response.ok) {
-                    const projectData = await response.json(); // Fyller i data från servern
-                        modal.querySelector('#edit-Id').value = projectData.id || '';
-                        modal.querySelector('#edit-ProjectName').value = projectData.projectName || '';
-                        modal.querySelector('#edit-Description').value = projectData.description || '';
-                        modal.querySelector('#edit-StartDate').value = formatDate(projectData.startDate);
-                        modal.querySelector('#edit-EndDate').value = formatDate(projectData.endDate);
-                        modal.querySelector('#edit-Budget').value = projectData.budget || '';
-
-                        // Klient-dropdown
-                        const clientSelect = modal.querySelector('#edit-SelectedClientId');
-                        clientSelect.innerHTML = '<option value="">Select a client</option>';
-                        projectData.clientOptions.forEach(opt => {
-                            const option = document.createElement('option');
-                            option.value = opt.value;
-                            option.text = opt.text;
-                            option.selected = opt.value === projectData.selectedClientId;
-                            clientSelect.appendChild(option);
-                        });
-
-                } else {
-                    console.error('Failed to fetch project data');
-                }
-            }
-        });
-    });
-});
-
-    function formatDate(dateString) {
-        return dateString ? dateString.split("T")[0] : "";
-    }
-
-</script> *@

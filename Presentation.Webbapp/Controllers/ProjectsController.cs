@@ -109,8 +109,6 @@ public class ProjectsController(IProjectService projectService, IStatusService s
         return Conflict(new { success = false, message = result.Error });
     }
 
-
-
     [HttpPost]
     public IActionResult Delete(string id)
     {
