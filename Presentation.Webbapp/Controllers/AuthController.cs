@@ -61,11 +61,9 @@ public class AuthController(IAuthService authService) : Controller
         return View(model);
     }
 
-    public async Task<IActionResult> Logout(string returnUrl = "~/")
+    public async Task<IActionResult> Logout()
     {
         await _authService.SignOutAsync();
         return RedirectToAction("SignIn", "Auth");
-
-        //return LocalRedirect(returnUrl);
     }
 }

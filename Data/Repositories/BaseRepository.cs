@@ -154,7 +154,7 @@ public abstract class BaseRepository<TEntity, TModel> : IBaseRepository<TEntity,
         await _context.SaveChangesAsync();
     }
 
-    // Genererat av ChatGTP 4o för att kunna mappa om status korrekt. 
+    // Genererat av ChatGTP 4o för att kunna mappa om status & client korrekt. 
     protected virtual TModel MapEntityToModel(TEntity entity)
     {
         return entity.MapTo<TModel>(); 

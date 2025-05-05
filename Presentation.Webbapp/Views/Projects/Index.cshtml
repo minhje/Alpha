@@ -13,6 +13,7 @@
         <button type="button" data-modal="true" data-target="#addProjectModal" class="btn btn-add btn-blue">Add Project</button>
     </header>
 
+    @* Genererat med hjälp av ChatGTP-4o för att sortera projekt efter status *@
     <div id="project-status-links">
         <a href="@Url.Action("Index", new { statusId = (int?)null })">
             ALL [@Model.AllCount]

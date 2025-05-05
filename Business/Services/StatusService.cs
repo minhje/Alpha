@@ -46,7 +46,7 @@ public class StatusService(IStatusRepository statusRepository) : IStatusService
         var result = await _statusRepository.GetAllAsync();
 
         if (!result.Succeeded || result.Result == null)
-            return Enumerable.Empty<SelectListItem>();
+            return [];
 
         return result.Result
             .Select(status => new SelectListItem

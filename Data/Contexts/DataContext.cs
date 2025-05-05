@@ -10,7 +10,7 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public virtual DbSet<UserAdressEntity> UserAdresses { get; set; }
     public virtual DbSet<ProjectEntity> Projects { get; set; }
     public virtual DbSet<StatusEntity> Statuses { get; set; }
-    public virtual DbSet<TagEntity> Tags { get; set; }
+    //public virtual DbSet<TagEntity> Tags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +22,4 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .HasForeignKey(p => p.StatusId)
             .OnDelete(DeleteBehavior.Restrict);
     }
-
-
 }

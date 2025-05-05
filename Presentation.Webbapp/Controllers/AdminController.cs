@@ -3,26 +3,21 @@ using Domain.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.WebApp.ViewModels;
-using Presentation.WebApp.ViewModels.Add;
-using Presentation.WebApp.ViewModels.Edit;
 
 namespace Presentation.WebApp.Controllers;
 
-//[Authorize]
-//[Route("admin")]
+[Authorize]
 public class AdminController(IUserService userService, IProjectService projectService, IClientService clientService) : Controller
 {
     private readonly IUserService _userService = userService;
     private readonly IProjectService _projectService = projectService;
     private readonly IClientService _clientService = clientService;
 
-    //[Route("dashboard")]
     public IActionResult Index()
     {
         return View();
     }
 
-    //[Route("projects/index")]
     public async Task<IActionResult> Projects()
     {
         var projectResult = await _projectService.GetProjectsAsync();
@@ -36,10 +31,10 @@ public class AdminController(IUserService userService, IProjectService projectSe
         };
 
         return View(viewModel);
+
     }
 
-    //[Authorize(Roles = "admin")]
-    //[Route("members")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Members()
     {
         var memberResult = await _userService.GetUsersAsync();
@@ -47,8 +42,7 @@ public class AdminController(IUserService userService, IProjectService projectSe
         return View(members);
     }
 
-    //[Authorize(Roles = "admin")]
-    //[Route("clients")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Clients()
     {
         var clientResult = await _clientService.GetClientsAsync();

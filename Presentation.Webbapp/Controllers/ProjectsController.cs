@@ -13,6 +13,8 @@ public class ProjectsController(IProjectService projectService, IStatusService s
     private readonly IProjectService _projectService = projectService;
     private readonly IStatusService _statusService = statusService;
 
+
+    // Hjälp tagen av ChatGTP-4o för att filtrera efter status. 
     [Route("projects")]
     public async Task<IActionResult> Index(int? statusId, AddProjectViewModel model, EditProjectViewModel editModel)
     {
@@ -103,10 +105,10 @@ public class ProjectsController(IProjectService projectService, IStatusService s
 
         if (result.Succeeded)
         {
-            return Ok(new { success = true });
+            return Ok();
         }
 
-        return Conflict(new { success = false, message = result.Error });
+        return Conflict();
     }
 
     [HttpPost]

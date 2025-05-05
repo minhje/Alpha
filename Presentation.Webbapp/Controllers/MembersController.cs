@@ -21,9 +21,9 @@ namespace Presentation.WebApp.Controllers
             {
                 var signupFormData = new SignUpFormData
                 {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
+                    FirstName = model.FirstName!,
+                    LastName = model.LastName!,
+                    Email = model.Email!,
                     Password = "DefaultPassword123!"
                 };
 
@@ -33,7 +33,7 @@ namespace Presentation.WebApp.Controllers
                     return RedirectToAction("Index");
                 }
 
-                ModelState.AddModelError(string.Empty, result.Error);
+                ModelState.AddModelError(string.Empty, result.Error!);
             }
 
             return View();

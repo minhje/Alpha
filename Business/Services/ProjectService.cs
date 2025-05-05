@@ -91,38 +91,7 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
             };
         }
     }
-
-    //public async Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id)
-    //{
-    //    var projectResult = await _projectRepository.GetAsync(
-    //        where: p => p.Id == id,
-    //        include => include.Client,
-    //        include => include.Status
-    //    );
-
-    //    if (!projectResult.Succeeded || projectResult.Result == null)
-    //        return new ProjectResult<EditProjectFormData> { Succeeded = false, StatusCode = 404, Error = "Project not found." };
-
-    //    var project = projectResult.Result;
-
-    //    var clientOptions = (await GetClientSelectListAsync()).ToList();
-
-    //    var formData = new EditProjectFormData
-    //    {
-    //        Id = project.Id,
-    //        ProjectName = project.ProjectName,
-    //        Description = project.Description,
-    //        StartDate = project.StartDate,
-    //        EndDate = project.EndDate,
-    //        Budget = project.Budget,
-    //        SelectedClientId = project.Client.Id,
-    //        ClientOptions = clientOptions,
-    //        Status = project.Status
-    //    };
-
-    //    return new ProjectResult<EditProjectFormData>
-    //    { Succeeded = true, StatusCode = 200, Result = formData };
-    //}
+    // Genererat av Chat GTP-4o för att hämta information om projektet inför updatering
     public async Task<ProjectResult<EditProjectFormData>> GetEditFormDataAsync(string id)
     {
         var projectResult = await _projectRepository.GetAsync(
@@ -150,7 +119,7 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
             Budget = project.Budget,
             SelectedClientId = project.Client?.Id ?? "",
             ClientOptions = clientOptions,
-            Status = project.Status // Om du vill mappa in detta också
+            Status = project.Status
         };
 
         return new ProjectResult<EditProjectFormData>
@@ -199,13 +168,13 @@ public class ProjectService(IProjectRepository projectRepository, IClientReposit
         };
     }
 
-
+    // Genererat med hjälp av ChatGTP-4o för att hämta Clients. 
     public async Task<IEnumerable<SelectListItem>> GetClientSelectListAsync()
     {
         var result = await _clientService.GetClientsAsync();
 
         if (!result.Succeeded || result.Result == null)
-            return Enumerable.Empty<SelectListItem>();
+            return [];
 
         return result.Result
             .Select(client => new SelectListItem
