@@ -14,7 +14,6 @@ public class ProjectsController(IProjectService projectService, IStatusService s
     private readonly IStatusService _statusService = statusService;
 
 
-    // Hjälp tagen av ChatGTP-4o för att filtrera efter status. 
     [Route("projects")]
     public async Task<IActionResult> Index(int? statusId, AddProjectViewModel model, EditProjectViewModel editModel)
     {
@@ -23,10 +22,13 @@ public class ProjectsController(IProjectService projectService, IStatusService s
 
         ViewBag.Description = model.Description;
 
+        //Genererad av ChatGTP-4o för att sortera projekten efter status. 
         var filteredProjects = statusId.HasValue
-            ? allProjects.Where(p => p.Status?.Id == statusId.Value).ToList()
+            ? [.. allProjects.Where(p => p.Status?.Id == statusId.Value)]
             : allProjects;
 
+
+        // Genererat av ChatGTP-4o efter problem med att få ut clients & status i formulären. 
         var viewModel = new ProjectViewModel
         {
             AddProjectFormData = new AddProjectFormData

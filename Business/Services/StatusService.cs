@@ -41,6 +41,7 @@ public class StatusService(IStatusRepository statusRepository) : IStatusService
             : new StatusResult<Status> { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
     }
 
+    // Genererat av ChatGTP-4o för att få ut lista av statusar till formulären. 
     public async Task<IEnumerable<SelectListItem>> GetStatusSelectListAsync()
     {
         var result = await _statusRepository.GetAllAsync();
